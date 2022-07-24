@@ -43,23 +43,22 @@
 ## 1-1. 프로젝트 제작 계기 및 참고 
 * 라이브 서비스를 구현해보고 싶어서 처음에는 우리동네 홍보 스트리밍 서비스를 계획했지만 쇼핑과 결합된 라이브 커머스가 현재 큰 관심 중 하나라 생각하여 라이브 커머스 웹 프로젝트를 진행하기로 했습니다.
 
-* 혼자 새롭게 기획하고 제작하기엔 많은 기간이 소요될 것 같아서 웹 디자인과 라이브 서비스는 네이버 쇼핑 라이브를 개인적으로 분석해 클론 코딩 하였으며, 장바구니, 구매페이지는 오늘의 쇼핑 웹 디자인을 참고 하였습니다. 
+* 혼자 새롭게 기획하고 제작하기엔 많은 기간이 소요될 것 같아 네이버 쇼핑 라이브를 참고해 클론 코딩 하였습니다.
 
 ## 1-2. 프로젝트 주요 기능
 1. 편의성과 소통성
-* 실시간 영상과 실시간 채팅 기능으로 제품에 대한 정보를 좀 더 상세히 보여주면서 질문에 대한 답을 바로 제공합니다.
+  * 실시간 영상과 실시간 채팅 기능으로 제품에 대한 정보를 좀 더 상세히 보여주면서 질문에 대한 답을 바로 제공합니다.
 
 2. 효율성
-* 실시간 방송이 끝나도 해당 영상을 다시 보여줌으로써 소비자에게 지속적인 서비스를 제공합니다.
-* 또한 라이브를 보면서 구매할 수 있게 하단에 제품글을 누르면 제품 소개 및 구매 창이 팝업 형식으로 보여줄 수 있게 하였습니다.
+  * 실시간 방송이 끝나도 해당 영상을 다시 보여줌으로써 소비자에게 지속적인 서비스를 제공합니다.
+  * 또한 라이브를 보면서 구매할 수 있게 하단에 제품글을 누르면 제품 소개 및 구매 창이 팝업 형식으로 보여줄 수 있게 하였습니다.
 
 3. 제품 관리 편리성
-* 판매글을 올렸을 때 동일한 상품에 대한 상품명과 금액을 동일시 하기 위해 제품 등록과 판매글 등록을 구분하였습니다.
-* 라이브 등록시 판매글을 선택해 동일한 제품을 계속 라이브 할 수 있습니다.
+  * 판매글을 올렸을 때 동일한 상품에 대한 상품명과 금액을 동일시 하기 위해 제품 등록과 판매글 등록을 구분하였습니다.
+  * 라이브 등록시 판매글을 선택해 동일한 제품을 계속 라이브 할 수 있습니다.
 
 4. 지역 홍보
-* 라이브 등록시 지역 설정 기능을 사용해 소비자가 '우리동네라이브' 탭에 접속하면 소비자 위지 정보와 동일한 판매 글을 보여줌으로써,
-해당 지역 가게 홍보에도 도움이 되는 서비스를 제공합니다.
+  * 라이브 등록시 지역 설정 기능을 사용해 소비자가 '우리동네라이브' 탭에 접속하면 소비자 위지 정보와 동일한 판매 글을 보여줌으로써, 해당 지역 가게 홍보에도 도움이 되는 서비스를 제공합니다.
 
 ## 1-2. 개발 환경 🛠 
 <img src="https://img.shields.io/badge/JAVA-FF4DAC?style=flat-square&logo=java&logoColor=white&width=300"> <img src="https://img.shields.io/badge/MySQL-B965DF?style=flat-square&logo=MySQL&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Boot-758bfd?style=flat-square&logo=SpringBoot&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Security-0083DE?style=flat-square&logo=Spring Security&logoColor=white"/> <img src="https://img.shields.io/badge/Apache Tomcat-21B88F?style=flat-square&logo=ApacheTomcat&logoColor=white"/> <img src="https://img.shields.io/badge/NGINX-007844?style=flat-square&logo=NGINX&logoColor=white"/>
