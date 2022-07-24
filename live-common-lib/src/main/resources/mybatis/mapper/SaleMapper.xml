@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.onlive.common.mapper.SaleMapper" >
+<resultMap id="pdPostVoMap" type="com.onlive.common.vo.PdPostVo">
+      <result column="sel_id"           property="selId" />
+      <result column="ps_index"         property="psIndex" />
+      <result column="ps_title"         property="psTitle" />
+      <result column="ps_price"         property="psPrice" />
+      <result column="ps_discount"      property="psDiscount" />
+      <result column="file_id"          property="fileId" />
+      <result column="ps_delivery_opt"  property="psDeliveryOpt" />
+      <result column="ps_delivery"      property="psDelivery" />
+      <result column="ps_content"       property="psContent" />
+      <result column="ps_post_status"    property="psPostStatus" />
+      <collection property="pdPostAddVo" ofType="com.onlive.common.vo.PdPostVo$PdPostAddVo" resultMap="pdPostAddMap"></collection>
+      <collection property="pdPostFileVo" ofType="com.onlive.common.vo.PdPostVo$PdPostFileVo" resultMap="pdPostFileMap"></collection>
+    </resultMap>
+    <resultMap id="pdPostAddMap" type="com.onlive.common.vo.PdPostVo$PdPostAddVo">
+      <result column="ps_index"   property="psIndex" />
+      <result column="pd_id"      property="pdId" />
+      <result column="pd_name"      property="pdName" />
+      <result column="pd_price"      property="pdPrice" />
+    </resultMap>
+    <resultMap id="pdPostFileMap" type="com.onlive.common.vo.PdPostVo$PdPostFileVo">
+      <result column="file_id"        property="fileId" />
+      <result column="upload_path"    property="uploadPath" />
+      <result column="file_name"      property="fileName" />
+    </resultMap>
+    
+    <select id="getSaleBoard" parameterType="String" resultMap="pdPostVoMap">
+        /*SaleMapper.getSaleBoard*/
+        SELECT 
+		      PP.PS_INDEX
+		      ,PP.PS_TITLE
+		      ,PP.PS_PRICE
+		      ,FI.UPLOAD_PATH
+		      ,FI.FILE_ID     
+		      ,PP.PS_DELIVERY_OPT
+		      ,PP.PS_DELIVERY
+		      ,PP.PS_CONTENT
+		FROM  PRODUCT_POST PP
+		JOIN  FILE_INFO FI
+		  ON  PP.FILE_ID = FI.FILE_ID
+		 AND PP.PS_INDEX = #{psIndex}
+<!--         SELECT SEL_ID
+              ,PS_INDEX
+              ,PS_TITLE
+              ,PS_PRICE
+              ,PS_DISCOUNT
+              ,FILE_ID
+              ,PS_DELIVERY_OPT
+              ,PS_DELIVERY
+              ,PS_CONTENT
+        FROM  PRODUCT_POST
+        WHERE PS_INDEX = #{psIndex} -->
+    </select>
+    <select id="getSaleProductList" parameterType="String" resultMap="pdPostAddMap">
+        /*SaleMapper.getSaleProductList*/
+	    SELECT  PI.PD_ID
+		       ,PI.PD_NAME
+		       ,PI.PD_PRICE
+		FROM   PRODUCT_POST_ADD PPA JOIN PRODUCT_INFO PI
+		ON     PPA.PS_INDEX = #{psIndex}
+		AND    PPA.PD_ID = PI.PD_ID
+<!--         /*SaleMapper.getSaleProductList*/
+        SELECT PD_ID
+               ,PD_NAME
+               ,PD_PRICE
+        FROM   PRODUCT_INFO
+        WHERE PD_ID
+            IN 
+                <foreach collection="list" item="item" open="(" separator="," close=")">#{item.PD_ID}</foreach> -->
+    </select>    
+    
+</mapper>

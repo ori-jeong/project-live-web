@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.onlive.common.mapper.ShopMapper" >
+     <resultMap id="cartMap"    type="com.onlive.common.vo.CartVo">
+	  <!-- <id      column="user_id"     property="userId" /> -->
+	  <result  column="sel_id"      property="selId" />
+	  <result  column="sel_name"    property="selName" />
+	  
+	  <collection property="cartPdSaleVo" ofType="com.onlive.common.vo.CartVo$CartPdSaleVo" resultMap="cartPdSaleMap"></collection>
+	  <collection property="cartPdVo"     ofType="com.onlive.common.vo.CartVo$CartPdVo"     resultMap="cartPdMap"></collection>
+	</resultMap>
+	<resultMap id="cartPdSaleMap"       type="com.onlive.common.vo.CartVo$CartPdSaleVo">
+      <id      column="ps_index"    property="psIndex" />
+      <result  column="sel_id"      property="selId" />
+      <result  column="ps_title"    property="psTitle" />  
+      <result  column="file_id"     property="fileId" />
+       <!-- <result  column="ps_discount" property="psDiscount" />   -->
+      <result  column="ps_delivery" property="psDelivery" />  
+      <result  column="upload_path"     property="uploadPath" />
+      <result  column="file_name"     property="fileName" />
+    </resultMap>
+ 	<resultMap id="cartPdMap"       type="com.onlive.common.vo.CartVo$CartPdVo">
+ 	   <id     column="ps_index"    property="psIndex" />
+	   <id     column="pd_id"       property="pdId"    />
+	   <result column="pd_name"     property="pdName" />
+	   <result column="pd_price"    property="pdPrice" />
+	   <result column="pd_count"    property="pdCount" />
+	   <result column="countPrice"  property="pdCountPrice" />
+    </resultMap>
+    
+    <resultMap id="orderMap"    type="com.onlive.common.vo.OrderVo">
+      <!-- <id      column="user_id"     property="userId" /> -->
+      <result  column="order_id"        property="orderId" />
+      <result  column="user_id"         property="userId" />
+      <result  column="sel_id"          property="selId" />
+      <result  column="sel_name"        property="selName" />
+      <result  column="ps_index"        property="psIndex" />
+      <result  column="addr_index"      property="addrIndex" />
+      <result  column="payment_status"   property="paymentStatus" />
+      <result  column="order_status"      property="orderStatus" />
+      <result  column="order_date"      property="orderDate" />
+        
+      <collection property="OrderPdSelVo" ofType="com.onlive.common.vo.OrderVo$OrderPdSelVo" resultMap="orderPdSelVoMap"></collection>
+      <collection property="OrderPdVo"    ofType="com.onlive.common.vo.OrderVo$OrderPdVo"    resultMap="orderPdVoMap"></collection>
+    </resultMap>
+    <resultMap id="orderPdSelVoMap"   type="com.onlive.common.vo.OrderVo$OrderPdSelVo">
+       <result column="sel_id"          property="selId" />
+       <result column="ps_index"        property="psIndex"    />
+       <result column="ps_title"        property="psTitle" />
+       <result column="file_id"         property="fileId" />
+       <result column="ps_discount"     property="psDiscount" />
+       <result column="ps_delivery"     property="psDelivery" />
+    </resultMap>
+    <resultMap id="orderPdVoMap"      type="com.onlive.common.vo.OrderVo$OrderPdVo">
+       <result column="ps_index"        property="psIndex" />
+       <result column="pd_id"           property="pdId"    />
+       <result column="pd_name"         property="pdName" />
+       <result column="pd_price"        property="pdPrice" />
+       <result column="pd_count"        property="pdCount" />
+       <result column="pd_count_price"  property="pdCountPrice" />
+    </resultMap>
+    <resultMap id="orderAddrMap"      type="com.onlive.common.vo.OrderVo$OrderAddrVo">
+       <result column="order_id"        property="orderId" />
+       <result column="addr_name"       property="addrName"    />
+       <result column="addr_recipient"  property="addrRecipient" />
+       <result column="addr_postcode"   property="addrPostcode" />
+       <result column="addr_roadaddr"   property="addrRoadaddr" />
+       <result column="addr_detailaddr" property="addrDetailaddr" />
+       <result column="addr_contact"    property="addrContact" />
+    </resultMap>
+    
+	<insert id="setCartList">   
+	   /* ShopMapper.setCartList */
+        <foreach collection="cartPdVo" item="item" separator=" " open="INSERT ALL" close="SELECT * FROM DUAL">
+        INTO CART(
+            USER_ID 
+            ,PS_INDEX 
+            ,PD_ID 
+            ,PD_COUNT 
+        )VALUES(
+            #{userId} 
+            ,#{psIndex} 
+            ,#{item.pdId} 
+            ,#{item.pdCount} 
+         )</foreach>   
+    </insert>   
+    
+    <select id="searchCartList" parameterType="com.onlive.common.vo.CartVo$CartPdVo" resultType="int">
+        /* ShopMapper.searchCartList */
+        SELECT COUNT(PD_ID) 
+        FROM   CART
+        WHERE  PS_INDEX = #{psIndex}
+          AND  PD_ID    = #{pdId}
+    </select>
+    
+    <insert id="setCart" parameterType="hashMap">
+        /* ShopMapper.setCart */
+        INSERT INTO CART(
+            USER_ID 
+            ,PS_INDEX 
+            ,PD_ID 
+            ,PD_COUNT 
+        )VALUES(
+            #{userId} 
+            ,#{psIndex} 
+            ,#{pdId} 
+            ,#{pdCount} 
+        )
+    </insert>
+    
+    <select id="getCartList" parameterType="String" resultMap="cartMap">
+        /* ShopMapper.getCartList */
+        SELECT SI.SEL_ID 
+		       ,SI.SEL_NAME 
+		       ,PS.PS_INDEX
+		       ,PS.PS_TITLE
+		       ,PS.FILE_ID
+		       ,PS.PS_DELIVERY
+		       ,PI.PD_ID
+		       ,PI.PD_NAME
+		       ,PI.PD_PRICE
+		       ,CT.PD_COUNT
+		       ,CT.CART_DATE
+		       ,FI.UPLOAD_PATH
+               ,FI.FILE_NAME
+		FROM  PRODUCT_POST PS 
+		      JOIN CART CT 
+			    ON  PS.PS_INDEX = CT.PS_INDEX 
+              JOIN  PRODUCT_INFO PI
+			    ON  PI.PD_ID = CT.PD_ID 
+			        AND  USER_ID  = #{userId}
+              JOIN  SELLER_INFO SI
+			    ON  PS.PS_INDEX = PS.PS_INDEX 
+			        AND  SI.SEL_ID   = PS.SEL_ID
+			  JOIN  FILE_INFO FI
+	            ON  FI.FILE_ID = PS.FILE_ID
+		ORDER BY CT.CART_DATE
+<!--         SELECT 
+                (SELECT  SI.SEL_ID 
+                  FROM   SELLER_INFO SI, PRODUCT_POST PS 
+                  WHERE  PS.PS_INDEX = PP.PS_INDEX 
+                  AND    SI.SEL_ID = PS.SEL_ID) AS SEL_ID 
+	            ,(SELECT SI.SEL_NAME 
+		          FROM   SELLER_INFO SI, PRODUCT_POST PS 
+		          WHERE  PS.PS_INDEX = PP.PS_INDEX 
+		          AND    SI.SEL_ID = PS.SEL_ID) AS SEL_NAME
+			    ,PS.PS_INDEX
+			    ,PS.PS_TITLE
+			    ,PS.FILE_ID
+			    ,PS.PS_DELIVERY
+			    ,PP.PD_ID
+			    ,PP.PD_NAME
+			    ,PP.PD_PRICE
+			    ,PP.PD_COUNT
+			    ,PP.CART_DATE
+	    FROM  PRODUCT_POST PS,
+		      (SELECT USER_ID
+					  ,C.PS_INDEX
+					  ,PI.PD_ID 
+					  ,PI.PD_NAME 
+					  ,PI.PD_PRICE 
+					  ,C.PD_COUNT
+					  ,C.CART_DATE
+			    FROM  PRODUCT_INFO PI, CART C
+			    WHERE PI.PD_ID = C.PD_ID 
+			    AND   USER_ID = #{userId}
+		      ) PP
+	    WHERE PS.PS_INDEX = PP.PS_INDEX 
+	    ORDER BY PP.CART_DATE -->
+    </select>
+    <update id="updateCartCount" parameterType="com.onlive.common.vo.CartVo$CartPdVo">
+        /* ShopMapper.updateCartCount */
+        UPDATE  CART
+        SET     PD_COUNT = #{pdCount}
+        WHERE   PS_INDEX = #{psIndex}
+          AND   PD_ID    = #{pdId}
+    </update>
+    <delete id="deleteCart" parameterType="com.onlive.common.vo.CartVo$CartPdVo">
+        /* ShopMapper.deleteCart */
+        DELETE FROM CART
+        WHERE
+        <choose>
+            <when test = "pdId == null">
+                 PS_INDEX = #{psIndex}
+            </when>
+            <otherwise>
+                 PS_INDEX = #{psIndex}
+             AND PD_ID    = #{pdId} 
+            </otherwise>
+        </choose>
+    </delete>
+    
+    <select id="getOrderProductFromCart" parameterType="com.onlive.common.vo.CartVo" resultMap="cartMap">
+        /* ShopMapper.getOrderProductFromCart */
+        SELECT SI.SEL_ID
+			   ,SI.SEL_NAME 
+			   ,PS.PS_INDEX
+			   ,PS.PS_TITLE
+			   ,PS.FILE_ID
+			   ,PS.PS_DELIVERY
+			   ,PP.PD_ID
+			   ,PP.PD_NAME
+			   ,PP.COUNTPRICE
+			   ,PP.PD_COUNT
+			   ,PP.CART_DATE
+			   ,FI.UPLOAD_PATH
+               ,FI.FILE_NAME
+		FROM 
+		     (SELECT DISTINCT(C.PD_ID)
+		             ,C.PS_INDEX
+		             ,PI.PD_NAME
+		             ,C.PD_COUNT
+		             ,(PI.PD_PRICE * C.PD_COUNT) AS COUNTPRICE
+		             ,C.CART_DATE
+		       FROM PRODUCT_INFO PI
+		            ,(SELECT PS_INDEX
+		                    ,PD_ID
+		                    ,PD_COUNT 
+		                    ,CART_DATE
+		              FROM  CART 
+		              WHERE PD_ID IN <foreach collection="cartPdVo" item="item" open="(" separator="," close=")"> #{item.pdId}</foreach>      
+		              AND   PS_INDEX IN <foreach collection="cartPdVo" item="item" open="(" separator="," close=")"> #{item.psIndex}</foreach>
+		              AND   USER_ID = #{userId})C
+		       WHERE C.PD_ID = PI.PD_ID) PP
+		      ,PRODUCT_POST PS
+		      JOIN SELLER_INFO SI
+		           ON SI.SEL_ID = PS.SEL_ID
+		      JOIN FILE_INFO FI
+                   ON FI.FILE_ID = PS.FILE_ID
+		WHERE PS.PS_INDEX = PP.PS_INDEX
+		ORDER BY PP.CART_DATE
+    </select>
+    <select id="getOrderProduct" parameterType="com.onlive.common.vo.CartVo" resultMap="cartMap">
+        /* ShopMapper.getOrderProduct */
+        SELECT SI.SEL_ID
+               ,SI.SEL_NAME 
+               ,PS.PS_INDEX
+               ,PS.PS_TITLE
+               ,PS.FILE_ID
+               ,PS.PS_DELIVERY
+               ,PP.PD_ID
+               ,PP.PD_NAME
+               ,PP.PD_PRICE
+               ,FI.UPLOAD_PATH
+               ,FI.FILE_NAME
+        FROM 
+             (SELECT PI.SEL_ID
+                     ,PSA.PS_INDEX 
+                     ,PI.PD_ID
+                     ,PI.PD_NAME
+                     ,PI.PD_PRICE
+               FROM PRODUCT_INFO PI
+                    ,PRODUCT_POST_ADD PSA
+               WHERE PI.PD_ID IN <foreach collection="cartPdVo" item="item" open="(" separator="," close=")"> #{item.pdId}</foreach>  
+               AND   PI.PD_ID = PSA.PD_ID) PP
+              ,PRODUCT_POST PS
+	          JOIN SELLER_INFO SI
+	            ON SI.SEL_ID = PS.SEL_ID
+	          JOIN FILE_INFO FI
+                ON FI.FILE_ID = PS.FILE_ID
+        WHERE PS.PS_INDEX = PP.PS_INDEX
+    </select>
+    
+    
+    <select id = "getNowOdereCount" parameterType="String" resultType="int">
+        /* ShopMapper.getNowOdereCount */
+        SELECT COUNT(ORDER_ID)
+        FROM   ORDERS
+        WHERE  DATE_FORMAT(ORDER_DATE, '%Y%m%d') = #{formatedNow}
+    </select>
+    
+    <insert id="setOrders" >
+         /* ShopMapper.setOrders */
+         <selectKey keyProperty="psDeliveryOpt" resultType="com.onlive.common.vo.OrderVo$OrderPdSelVo" order="BEFORE">
+            SELECT PS_DELIVERY_OPT as psDeliveryOpt
+            FROM   PRODUCT_POST
+            WHERE  PS_INDEX IN <foreach collection = "orderPdSelVo" item="ord" separator="," open="(" close=")">#{ord.psIndex}</foreach>
+        </selectKey>
+            INSERT INTO ORDERS(
+                ORDER_ID
+                ,ORDER_PD_ID
+                ,USER_ID
+                ,SEL_ID
+                ,PS_INDEX
+                ,PD_ID
+                ,PD_COUNT
+                ,PD_COUNT_PRICE
+                ,PS_DELIVERY_OPT
+                ,PS_DELIVERY
+                ,PAYMENT_STATUS
+                <!-- ,ORDER_STATUS -->
+                <!-- ,ORDER_DATE -->
+            )VALUES
+         <foreach collection="orderPdSelVo" item="sel" separator="," >
+          <foreach collection="orderPdVo" item="pd" separator="," >
+            <if test = "sel.psIndex == pd.psIndex">
+            (
+                #{orderId}
+                ,CONCAT(#{orderId},#{pd.orderPdId})
+                ,#{userId}
+                ,#{sel.selId}
+                ,#{sel.psIndex}
+                ,#{pd.pdId}
+                ,#{pd.pdCount}
+                ,#{pd.pdCountPrice}
+                ,#{psDeliveryOpt}
+                ,#{sel.psDelivery}
+                ,#{paymentStatus}
+                <!-- ,#{orderDate} -->
+            )
+            </if>
+          </foreach>
+        </foreach>
+    </insert>
+    
+    <insert id="setOrderAddr" parameterType = "com.onlive.common.vo.OrderVo$OrderAddrVo">
+        /* ShopMapper.setOrderDetail */
+        <selectKey 
+           keyProperty="addrName,addrRecipient,addrPostcode,addrRoadaddr,addrDetailaddr,addrContact" 
+           resultType="com.onlive.common.vo.OrderVo$OrderAddrVo" order="BEFORE">
+		     SELECT  ADDR_NAME
+		             ,ADDR_RECIPIENT
+		             ,ADDR_POSTCODE
+		             ,ADDR_ROADADDR
+		             ,ADDR_DETAILADDR
+		             ,ADDR_CONTACT
+		     FROM    USER_ADDRESS
+		     WHERE USER_ID = #{userId}
+		     AND   ADDR_INDEX = #{addrIndex}
+		</selectKey>
+        INSERT INTO ORDER_ADDR(
+            ORDER_ID
+	        ,ADDR_NAME
+	        ,ADDR_RECIPIENT
+	        ,ADDR_POSTCODE
+	        ,ADDR_ROADADDR
+	        ,ADDR_DETAILADDR
+	        ,ADDR_CONTACT
+        )VALUES(
+            #{orderId}
+            ,#{addrName}
+            ,#{addrRecipient}
+            ,#{addrPostcode}
+            ,#{addrRoadaddr}
+            ,#{addrDetailaddr}
+            ,#{addrContact}
+        )
+
+    </insert>
+    <insert id="setPayment" >
+        INSERT INTO PAYMENT(
+                PAYMENT_ID
+                ,ORDER_ID
+                ,PAYMENT_TYPE
+                ,TOTAL_PD_PRICE
+                ,TOTAL_DELIVERY
+                ,TOTAL_PRICE
+                <!-- ,PAYMENT_DAET -->
+        )VALUES(
+                #{orderId}
+                ,#{orderId}
+                ,#{paymentType}
+                ,#{totalPdPrice}
+                ,#{totalDelivery}
+                ,#{totalPrice}
+        
+        )
+    </insert>
+    <delete id="deleteCartByOrder" parameterType="com.onlive.common.vo.OrderVo">
+        
+        DELETE FROM CART
+        WHERE  USER_ID = #{userId}
+        AND PS_INDEX in         
+            <foreach collection = "orderPdSelVo" item="sel" separator="," open="(" close=")">
+                #{sel.psIndex}
+            </foreach>
+    </delete>
+</mapper>

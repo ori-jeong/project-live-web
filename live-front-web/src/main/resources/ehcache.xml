@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         updateCheck="true" monitoring="autodetect" dynamicConfig="true">
+    <diskStore path="java.io.tmpdir"/>
+
+    <!-- @INFO Cache Repository 설정 -->
+    <!--  -->
+    <cache name="CodeMapper.lisfOfAllCode"
+           maxEntriesLocalHeap="20000"
+           maxEntriesLocalDisk="30000"
+           eternal="false"
+           diskSpoolBufferSizeMB="20"
+           timeToIdleSeconds="0"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="LFU"
+           transactionalMode="off">
+        <persistence strategy="localTempSwap"/>
+    </cache>
+</ehcache>

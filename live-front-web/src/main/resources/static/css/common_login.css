@@ -1,0 +1,48 @@
+@charset "UTF-8";
+@font-face {
+    font-family: 'Pretendard-ExtraLight';
+    src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-ExtraLight.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'HallymGothic-Regular';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2204@1.0/HallymGothic-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+}
+body,a,button,input,label,ul,li,p,div,span,th,td,textarea{
+    font-family: 'HallymGothic-Regular';
+}
+body{
+    text-align: center;
+    padding: 100px 30px;
+    max-width: 1280px;
+    height: auto;
+    margin: auto;
+    position: relative;
+    font-size: 16px;
+    background: #f5f5f5;
+}
+img{
+    max-width: 100%;
+    max-height: 100%;
+}
+.img_logo{
+    height: 130px;
+    margin-bottom: 30px;
+}
+a{
+    text-decoration: none;
+}
+button{
+    border:0;
+}
+ul,li{
+   list-style:none;
+   padding-left:0px;
+}
+.relative{
+    position: relative;
+}

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.onlive.common.mapper.SendCodeMapper">
+    <insert id="sendCodeHistory" parameterType="com.onlive.common.vo.SendCodeVo">
+	    /*SendCodeMapper.sendCodeHistory*/
+	    INSERT INTO SEND_CODE_HISTORY
+	        (SEND_TYPE
+	        ,SEND_TO
+	        ,AUTH_CODE
+        )VALUES(
+            #{sendType}
+            ,#{sendTo}
+            ,#{authCode}
+        )
+    </insert>
+    <select id="searchAuthCode" 
+        parameterType="com.onlive.common.vo.SendCodeVo" 
+        resultType="com.onlive.common.vo.SendCodeVo">
+	    /*SendCodeMapper.searchAuthCode*/
+<!-- 	    SELECT code.auth_code 
+	       FROM (SELECT auth_code
+	               FROM SEND_CODE_HISTORY  
+	               WHERE send_to=#{sendTo} 
+	               and 
+	               ORDER BY send_date DESC) code 
+	       WHERE rownum=1 -->
+        SELECT  auth_code
+        FROM    SEND_CODE_HISTORY
+        WHERE   SEND_TO = #{sendTo}
+            AND AUTH_CODE = #{inputCode}
+            AND SEND_DATE > DATE_ADD(NOW(), INTERVAL -5 MINUTE)  	       
+    </select>
+</mapper>

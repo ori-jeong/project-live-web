@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.onlive.common.mapper.AdminMapper" >
+
+     <resultMap id="productMap" type="com.onlive.common.vo.ProductVo">
+      <result column="sel_id"       property="selId" />
+      <result column="pd_id"        property="pdId" />
+      <result column="pd_name"      property="pdName" />
+      <result column="pd_price"     property="pdPrice" />
+      <result column="pd_strock"    property="pdStrock" />
+      <result column="pd_status"     property="pdStatus" />
+      <result column="pd_date"      property="pdDate" />
+      <!-- <collection property="ProductIdListMap" ofType="com.onlive.common.vo.ProductVo$ProductIdList"></collection> -->
+    </resultMap>
+<!--     <resultMap id="ProductIdListMap" type="com.onlive.common.vo.ProductVo$ProductIdList">
+      <result column="pd_id"        property="pdId" />
+      <result column="pd_name"      property="pdName" />
+    </resultMap> -->
+    <resultMap id="pdPostVoMap" type="com.onlive.common.vo.PdPostVo">
+      <result column="sel_id"           property="selId" />
+      <result column="ps_index"         property="psIndex" />
+      <result column="ps_title"         property="psTitle" />
+      <result column="ps_price"         property="psPrice" />
+      <result column="ps_discount"      property="psDiscount" />
+      <result column="file_id"          property="fileId" />
+      <result column="ps_delivery_opt"  property="psDeliveryOpt" />
+      <result column="ps_delivery"      property="psDelivery" />
+      <result column="ps_content"       property="psContent" />
+<!--       <result column="cate_index"       property="psCate" />
+      <result column="cate_name"        property="psCateName" /> -->
+      <result column="ps_post_status"    property="psPostStatus" />
+      <collection property="pdPostAddVo" ofType="com.onlive.common.vo.PdPostVo$PdPostAddVo" resultMap="pdPostAddMap"></collection>
+      <collection property="pdPostFileVo" ofType="com.onlive.common.vo.PdPostVo$PdPostFileVo" resultMap="pdPostFileMap"></collection>
+    </resultMap>
+    <resultMap id="pdPostAddMap" type="com.onlive.common.vo.PdPostVo$PdPostAddVo">
+      <result column="ps_index"   property="psIndex" />
+      <result column="pd_id"      property="pdId" />
+    </resultMap>
+    <resultMap id="pdPostFileMap" type="com.onlive.common.vo.PdPostVo$PdPostFileVo">
+      <result column="file_id"        property="fileId" />
+      <result column="upload_path"    property="uploadPath" />
+      <result column="file_name"      property="fileName" />
+    </resultMap>
+    <resultMap id="liveMap" type="com.onlive.common.vo.LiveVo">
+      <result column="sel_id"           property="selId" />
+      <result column="live_id"          property="liveId" />
+      <result column="cate_index"       property="cateIndex" />
+      <result column="ps_index"         property="psIndex" />
+      <result column="live_title"       property="liveTitle" />
+      <result column="file_id"          property="fileId" />
+      <result column="live_start_day"   property="liveStartDay" />
+      <result column="live_start_time"  property="liveStartTime" />
+      <result column="live_end_time"    property="liveEndTime" />
+      <result column="live_view"        property="liveView" />
+      <result column="upload_path"      property="uploadPath" />
+      <result column="file_name"        property="fileName" />
+      <result column="region_1_code"    property="region1Code" />
+    </resultMap>
+    <resultMap id="cancelOrderMap" type="com.onlive.common.vo.OrderVo$CancelOrderVo">
+      <result column="order_id"                property="orderId" />
+      <result column="cancel_order_price"      property="cancelOrderPrice" />
+    </resultMap>
+    
+    <select id ="getStreamKey" parameterType="String" resultType="String">
+        /*AdminMapper.getStreamKey*/
+        SELECT SEL_STREAM_KEY
+        FROM   STREAMKEY
+        WHERE  SEL_ID     = #{selId}  
+    </select>
+    
+    <update id = "updateStreamKey" parameterType="com.onlive.common.vo.SellerVo$SellerLiveVo">
+        /*AdminMapper.updateStreamKey*/
+        UPDATE STREAMKEY
+        SET    SEL_STREAM_KEY = #{selStreamKey}
+        WHERE  SEL_ID     = #{selId}
+    </update>
+    
+    <insert id="createLive">
+        /*AdminMapper.createLive*/
+        INSERT INTO LIVE_INFO(
+            SEL_ID
+            ,LIVE_ID
+            ,CATE_INDEX
+            ,PS_INDEX
+            ,LIVE_TITLE
+            ,FILE_ID
+            ,LIVE_START_DAY
+            ,LIVE_START_TIME
+            ,LIVE_END_TIME
+            ,REGION_1_CODE
+        )VALUES(
+            #{selId}
+            ,#{liveId}
+            ,#{cateIndex}
+            ,#{psIndex}
+            ,#{liveTitle}
+            ,#{fileId}
+            ,DATE_FORMAT(#{liveStartDay}, '%Y-%m-%d')
+            ,DATE_FORMAT(#{liveStartTime},'%Y-%m-%d %H:%i')
+            ,DATE_FORMAT(#{liveEndTime},'%Y-%m-%d %H:%i')
+            ,#{region1Code}
+        )
+    </insert>
+    <select id="getLiveInfo" parameterType="com.onlive.common.vo.LiveVo" resultType="com.onlive.common.vo.LiveVo">
+        /*AdminMapper.getLiveInfo*/
+        SELECT LI.LIVE_ID
+               ,LI.CATE_INDEX
+               ,LI.PS_INDEX
+               ,LI.LIVE_TITLE
+               ,DATE_FORMAT(LI.LIVE_START_DAY, '%Y-%m-%d') AS LIVE_START_DAY
+               ,DATE_FORMAT(LI.LIVE_START_TIME, '%H:%i') AS LIVE_START_TIME
+               ,DATE_FORMAT(LI.LIVE_END_TIME, '%H:%i') AS LIVE_END_TIME
+               ,FI.FILE_ID
+               ,FI.UPLOAD_PATH
+               ,FI.FILE_NAME
+               ,LI.REGION_1_CODE
+        FROM   LIVE_INFO LI
+               ,FILE_INFO FI
+        WHERE  LI.SEL_ID  = #{selId}
+               AND LI.LIVE_ID = #{liveId}
+               AND LI.FILE_ID = FI.FILE_ID  
+    </select>
+     <select id="countLive1Status" parameterType="com.onlive.common.vo.LiveVo" resultType="int">
+        /*AdminMapper.countLive1Status*/
+	     SELECT COUNT(LIVE_ID)
+		 FROM   LIVE_INFO
+<![CDATA[WHERE CONCAT(DATE_FORMAT(LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LIVE_START_TIME,' %H:%i')) <=  DATE_FORMAT(#{nowDateTime},'%Y-%m-%d %H:%i') 
+		AND CONCAT(DATE_FORMAT(LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LIVE_END_TIME,' %H:%i')) >=  DATE_FORMAT(#{nowDateTime},'%Y-%m-%d %H:%i') ]]>
+     </select>
+    <update id="updateLive" parameterType="com.onlive.common.vo.LiveVo">
+        /*AdminMapper.updateLive*/
+        UPDATE LIVE_INFO
+        SET    CATE_INDEX      = #{cateIndex}
+	           ,PS_INDEX        = #{psIndex}
+	           ,LIVE_TITLE      = #{liveTitle}
+	           ,FILE_ID         = IFNULL(#{fileId, jdbcType=VARCHAR}, FILE_ID)
+               ,LIVE_START_DAY  = DATE_FORMAT(#{liveStartDay},'%Y-%m-%d')
+               ,LIVE_START_TIME = DATE_FORMAT(#{liveStartTime},'%H:%i')
+               ,LIVE_END_TIME   = DATE_FORMAT(#{liveEndTime},'%H:%i')
+	           ,REGION_1_CODE   = #{region1Code}
+	           ,LIVE_STATUS      = IFNULL(#{liveStatus, jdbcType=VARCHAR},LIVE_Status)
+        WHERE  SEL_ID   = #{selId}
+               AND LIVE_ID  = #{liveId}
+    </update>
+    <delete id="deleteLive" parameterType="com.onlive.common.vo.LiveVo"> 
+        /*AdminMapper.deleteLive*/
+        DELETE FROM LIVE_INFO
+        WHERE  SEL_ID = #{selId}
+               AND LIVE_ID = #{liveId} 
+    </delete>
+    <select id="getLiveList" parameterType="com.onlive.common.vo.LiveVo" resultMap="liveMap">
+        /*AdminMapper.getLiveList*/
+        SELECT FI.UPLOAD_PATH
+               ,FI.FILE_NAME
+               ,LI.LIVE_ID
+               ,LI.LIVE_TITLE
+               ,LI.FILE_ID
+               ,DATE_FORMAT(LI.LIVE_START_DAY, '%Y-%m-%d') AS LIVE_START_DAY
+               ,DATE_FORMAT(LI.LIVE_START_TIME, '%H:%i') AS LIVE_START_TIME
+               ,DATE_FORMAT(LI.LIVE_END_TIME, '%H:%i') AS LIVE_END_TIME
+               ,LI.LIVE_VIEW
+               ,LI.LIVE_STATUS
+        FROM   FILE_INFO FI
+               ,LIVE_INFO LI
+        WHERE  SEL_ID = #{selId}
+               AND FI.FILE_ID = LI.FILE_ID
+        ORDER BY LIVE_START_DAY
+    </select>
+    
+    <insert id="createProduct" parameterType="com.onlive.common.vo.ProductVo">
+        /*AdminMapper.createProduct*/
+        INSERT INTO PRODUCT_INFO(
+            SEL_ID
+            ,PD_ID
+            ,PD_NAME
+            ,PD_PRICE
+            ,PD_STROCK
+            ,PD_Status
+        )VALUES(
+            #{selId}
+            ,#{pdId}
+            ,#{pdName}
+            ,#{pdPrice}
+            ,#{pdStrock}
+            ,#{pdStatus}
+        )
+            
+    </insert>
+   
+    <update id="updateProduct" parameterType="com.onlive.common.vo.ProductVo">
+        /*AdminMapper.updateProduct*/
+        UPDATE PRODUCT_INFO
+        SET    PD_NAME    = #{pdName}
+               ,PD_PRICE  = #{pdPrice}
+               ,PD_STROCK = #{pdStrock}
+               ,PD_STATUS  = IFNULL(#{pdStatus, jdbcType=VARCHAR},PD_STATUS)
+        WHERE  SEL_ID = #{selId}
+               AND PD_ID  = #{pdId}      
+    </update>
+    <select id="getProducts" parameterType="String" resultMap="productMap">
+        /*AdminMapper.getProducts*/
+        SELECT PD_ID
+               ,PD_NAME
+               ,PD_PRICE
+               ,PD_STROCK
+               ,PD_STATUS
+               ,PD_DATE
+        FROM   PRODUCT_INFO
+        WHERE  SEL_ID = #{selId}
+        ORDER  BY PD_DATE DESC
+    </select>
+    <select id="getProductInfo" parameterType="com.onlive.common.vo.ProductVo" resultMap="productMap">
+        /*AdminMapper.getProducts*/
+        SELECT PD_ID
+               ,PD_NAME
+               ,PD_PRICE
+               ,PD_STROCK
+               ,PD_STATUS
+               ,PD_DATE
+        FROM   PRODUCT_INFO
+        WHERE  SEL_ID = #{selId}
+               AND PD_ID = #{pdId}
+    </select>
+    <delete id="deletePdPostAdd" parameterType="com.onlive.common.vo.ProductVo">
+        /*AdminMapper.deletePdPostAdd*/
+        DELETE 
+        FROM   PRODUCT_POST_ADD
+        WHERE  SEL_ID = #{selId}
+        AND    PD_ID IN
+                <foreach collection = "productIdList" item="sel" separator="," open="(" close=")">
+                    #{sel.pdId}
+                </foreach>
+    </delete>
+    <delete id="deleteProducts" parameterType="com.onlive.common.vo.ProductVo">
+        /*AdminMapper.deleteProducts*/
+        DELETE 
+        FROM   PRODUCT_INFO
+        WHERE  SEL_ID = #{selId}
+        AND    PD_ID IN
+	            <foreach collection = "productIdList" item="sel" separator="," open="(" close=")">
+	                #{sel.pdId}
+	            </foreach>
+    </delete>
+    <select id="getPdPostList" parameterType="String" resultMap="pdPostVoMap">
+    /*AdminMapper.getPdPostList*/
+        SELECT FI.UPLOAD_PATH
+               ,FI.FILE_NAME
+               ,PP.PS_INDEX
+               ,PP.PS_TITLE
+               ,PP.PS_PRICE
+               ,PP.FILE_ID
+               ,PP.PS_DELIVERY_OPT
+               ,PP.PS_DELIVERY
+               ,PP.PS_POST_STATUS
+        FROM   FILE_INFO FI
+               ,PRODUCT_POST PP 
+		WHERE  SEL_ID = #{selId}
+	           AND PP.FILE_ID = FI.FILE_ID
+	           AND PS_DELETE = 0
+        
+    </select>
+    <delete id="deleteCheckPdPost" parameterType="com.onlive.common.vo.PdPostVo">
+        /*AdminMapper.deleteCheckPdPost*/
+        UPDATE PRODUCT_POST
+        SET    PS_DELETE = 1
+        WHERE  SEL_ID = #{selId}
+        AND    PS_INDEX IN
+               <foreach collection = "pdPostAddVo" item="pd" separator="," open="(" close=")">
+                    #{pd.psIndex}
+                </foreach>
+<!--         DELETE 
+        FROM   PRODUCT_POST
+        WHERE  SEL_ID = #{selId}
+        AND    PS_INDEX IN
+                <foreach collection = "pdPostAddVo" item="pd" separator="," open="(" close=")">
+                    #{pd.psIndex}
+                </foreach> -->
+    </delete>
+    <select id="getCategoryList" resultType="java.util.HashMap">
+        /*AdminMapper.getCategoryList*/
+        SELECT CATE_INDEX
+               ,CATE_NAME
+        FROM   PRODUCT_CATEGORY 
+        WHERE  CATE_INDEX >100
+    </select>
+    <select id="getProductsList" parameterType="String" resultMap="productMap">
+        /*AdminMapper.getProductsList*/
+        SELECT PD_ID
+               ,PD_NAME
+               ,PD_PRICE
+        FROM    PRODUCT_INFO
+        WHERE  SEL_ID = #{selId}
+               AND PD_STATUS = 'on'
+    </select>
+    <insert id="setUploadFile">
+        /*AdminMapper.setUploadFile*/
+        INSERT INTO FILE_INFO(
+            FILE_ID
+            ,UPLOAD_PATH
+            ,FILE_NAME
+        )VALUES(    
+            #{fileId}
+            ,#{uploadPath}
+            ,#{fileName}
+        )
+        
+    </insert>
+    <select id="getPsIndexNum" parameterType='String' resultType="String">
+        /*AdminMapper.getPsIndexNum*/
+        SELECT COUNT(PS_INDEX)
+        FROM   PRODUCT_POST
+        WHERE  PS_INDEX LIKE '%'||#{day}||'%'
+    </select>
+    <insert id="createPdPost">
+        /*AdminMapper.createPdPost*/
+        INSERT INTO PRODUCT_POST(
+            SEL_ID
+            ,PS_INDEX
+            ,PS_TITLE
+            ,PS_PRICE
+            ,FILE_ID
+            ,PS_DELIVERY_OPT
+            ,PS_DELIVERY
+            ,PS_CONTENT
+            ,PS_POST_STATUS
+        )VALUES(    
+            #{selId}
+            ,#{psIndex}
+            ,#{psTitle}
+            ,#{psPrice}
+            ,#{fileId}
+            ,#{psDeliveryOpt}
+            ,IFNULL(#{psDelivery, jdbcType=NUMERIC},0)
+            ,#{psContent}
+            ,#{psPostStatus}
+        )
+    </insert>
+    <insert id="createAddPdList" >
+        /*AdminMapper.createAddPdList*/
+        INSERT INTO PRODUCT_POST_ADD(
+            SEL_ID
+            ,PS_INDEX
+            ,PD_ID
+        )VALUES
+        <foreach collection="pdPostAddVo" item="item"  separator=",">
+        (
+            #{selId}
+            ,#{psIndex}
+            ,#{item.pdId}                            
+        )
+        </foreach>  
+    </insert>
+    <delete id="deleteAddPdList" parameterType="com.onlive.common.vo.PdPostVo">
+        /*AdminMapper.deleteAddPdList*/
+        DELETE 
+        FROM   PRODUCT_POST_ADD
+        WHERE  PS_INDEX = #{psIndex}
+    </delete>
+    <select id="getPdpostInfo" parameterType="com.onlive.common.vo.PdPostVo" resultMap="pdPostVoMap">
+         /*AdminMapper.getPdpostInfo*/
+         SELECT FI.FILE_ID
+               ,FI.FILE_NAME
+               ,PP.PS_INDEX
+               ,PP.PS_TITLE
+               ,PP.PS_PRICE
+               ,PP.PS_DELIVERY_OPT
+               ,PP.PS_DELIVERY
+               ,PP.PS_CONTENT
+               ,PP.PS_POST_STATUS
+               ,PPA.PD_ID
+        FROM   PRODUCT_POST PP
+               ,FILE_INFO FI
+               ,PRODUCT_POST_ADD PPA
+        WHERE  PP.SEL_ID    = #{selId}
+		       AND PP.PS_INDEX  = #{psIndex}
+		       AND PPA.PS_INDEX = #{psIndex}
+		       AND PPA.PS_INDEX = PP.PS_INDEX
+		       AND PP.FILE_ID   = FI.FILE_ID            
+    
+    </select>
+        <delete id="deletePdPost" parameterType="com.onlive.common.vo.PdPostVo">
+        /*AdminMapper.deleteProducts*/
+        DELETE FROM PRODUCT_POST
+        WHERE  SEL_ID = #{selId}
+               AND PS_INDEX = #{psIndex}
+    </delete>
+    <update id="updatePdPost" parameterType="com.onlive.common.vo.PdPostVo">
+        /*AdminMapper.updatePdPost*/
+        UPDATE PRODUCT_POST
+        SET    PS_TITLE         = #{psTitle}
+               ,PS_PRICE        = #{psPrice}
+               ,FILE_ID         = IFNULL(#{fileId, jdbcType=VARCHAR},FILE_ID)
+               ,PS_DELIVERY_OPT = #{psDeliveryOpt}
+               ,PS_DELIVERY     = IFNULL(#{psDelivery, jdbcType=NUMERIC},0)
+               ,PS_CONTENT      = #{psContent}
+               ,PS_POST_STATUS   = #{psPostStatus}
+        WHERE  SEL_ID   = #{selId}
+               AND PS_INDEX = #{psIndex}
+    </update>
+    <select id="getOnPdPostList" parameterType="string" resultMap="pdPostVoMap">
+        /*AdminMapper.getOnPdPostList*/
+        SELECT PS_INDEX
+               ,PS_TITLE
+        FROM   PRODUCT_POST
+        WHERE  SEL_ID = #{selId}
+               AND PS_POST_STATUS = 'on'
+    </select>
+    <select id="getSaleList" parameterType="string" resultType="com.onlive.common.vo.SalesVo">
+        /*AdminMapper.getSaleList*/
+		SELECT ORD.ORDER_ID
+		      ,ORD.ORDER_PD_ID             
+		      ,PAYMENT_STATUS
+		      ,ORDER_STATUS
+		      ,ORD.PS_INDEX  
+		      ,ORD.PD_ID             
+		      ,PI.PD_NAME                
+		      ,ORD.PD_COUNT          
+		      ,ORD.PD_COUNT_PRICE
+		      ,ORD.PS_DELIVERY_OPT         
+		      ,ORD.PS_DELIVERY           
+		      ,ORD.USER_ID               
+		      ,ROA.ADDR_RECIPIENT        
+		      ,ORD.ORDER_DATE            		         
+		FROM  ORDERS ORD 
+		      JOIN ORDER_ADDR ROA
+	 	        ON SEL_ID = #{selId}
+	 	           AND ORD.ORDER_ID = ROA.ORDER_ID
+		      JOIN PRODUCT_INFO PI 
+		        ON ORD.PD_ID = PI.PD_ID
+	    ORDER BY ORD.ORDER_DATE DESC
+		         ,ORD.PS_INDEX 
+    </select>
+    <select id = "getCancelOrderCount" parameterType="String" resultType="int">
+        /*AdminMapper.getCancelOrderCount*/
+        SELECT COUNT(ORDER_ID)
+        FROM   ORDERS
+        WHERE  DATE_FORMAT(ORDER_DATE, '%Y%m%d') = #{formatedNow}
+    </select>
+    <select id="getCancelTotalPrice" parameterType="com.onlive.common.vo.SalesVo" resultMap="cancelOrderMap">
+        /*AdminMapper.getCancelTotalPrice*/
+    
+	    SELECT FN.ORDER_ID
+	           ,SUM(FN.TOTAL) AS CANCEL_ORDER_PRICE 
+		FROM
+		    (SELECT ORDS.ORDER_ID
+		            ,ORDS.PS_INDEX
+		            ,CC.CT3
+		            ,ORDS.PD_COUNT_PRICE
+		            ,CC.PS_DELIVERY
+		            ,(PD_COUNT_PRICE+IFNULL(CC.PS_DELIVERY,0)) AS TOTAL
+		     FROM   ORDERS ORDS
+		     LEFT JOIN 
+		                (SELECT ORD.ORDER_ID
+		                        ,ORD.PS_INDEX
+		                        ,(ORD.CT1 - PDORD.CT2) CT3
+		                        ,ORD.PS_DELIVERY
+		                 FROM 
+		                        (SELECT   ORDER_ID
+		                                  ,PS_INDEX
+		                                  ,PS_DELIVERY
+		                                  ,COUNT(PS_DELIVERY) AS CT1
+		                         FROM     ORDERS
+		                         WHERE    ORDER_ID IN <foreach collection="salesIdsVo" item="item" open="(" separator="," close=")">#{item.orderId}</foreach>
+		                         AND      PS_INDEX IN <foreach collection="salesIdsVo" item="item" open="(" separator="," close=")">#{item.psIndex}</foreach>
+		                         AND      PS_DELIVERY != 0
+		                         GROUP BY ORDER_ID,PS_INDEX, PS_DELIVERY) ORD
+		                        ,(SELECT  ORDER_ID,PS_INDEX
+		                                  ,COUNT(PS_INDEX) AS CT2
+		                         FROM     ORDERS
+		                         WHERE    ORDER_PD_ID IN <foreach collection="salesIdsVo" item="item" open="(" separator="," close=")">#{item.orderPdId}</foreach>
+		                         AND      PS_DELIVERY != 0
+		                         GROUP BY ORDER_ID,PS_INDEX, PS_DELIVERY) PDORD
+		                 WHERE ORD.ORDER_ID = PDORD.ORDER_ID
+		                 AND ORD.PS_INDEX = PDORD.PS_INDEX) CC
+		     ON  ORDS.ORDER_ID = CC.ORDER_ID
+		     AND ORDS.PS_INDEX = CC.PS_INDEX  
+		     AND CC.CT3 = 0
+		     WHERE ORDER_PD_ID IN <foreach collection="salesIdsVo" item="item" open="(" separator="," close=")">#{item.orderPdId}</foreach>
+		     ) FN
+		GROUP BY FN.ORDER_ID
+	
+    </select>
+    <insert id="insertCancelOrderSeller" parameterType="com.onlive.common.vo.SalesVo">
+        /*AdminMapper.insertCancelOrderSeller*/
+<!--         <selectKey keyProperty="orderPdPrice" resultType="com.onlive.common.vo.SalesVo$SalesIdsVo" order="BEFORE">
+            SELECT PD_COUNT_PRICE AS ORDER_PD_PRICE
+            FROM   ORDERS
+            WHERE  ORDER_ID IN <foreach collection = "salesIdsVo" item="ord" separator="," open="(" close=")">#{ord.orderId}</foreach>
+              AND  PD_ID IN <foreach collection = "salesIdsVo" item="pd" separator="," open="(" close=")">#{pd.pdId}</foreach>
+        </selectKey> -->
+        INSERT INTO CANCEL_ORDER(
+		    CANCEL_ORDER_ID     
+		    ,ORDER_ID
+		    ,CANCEL_ORDER_PRICE
+		)VALUES
+		<foreach collection="list" item="item" index="i" separator=" ">
+		(
+		    #{item.cancelOrderId}
+		    ,#{item.orderId}
+		    ,#{item.cancelOrderPrice}
+		)</foreach>   
+    </insert>
+    <update id="cancelOrderProcess" parameterType="com.onlive.common.vo.SalesVo">
+        /*AdminMapper.cancelOrderProcess*/
+        UPDATE ORDERS
+        SET    ORDER_STATUS = #{orderStatus}
+        <!-- WHERE  SEL_ID   = #{selId} -->
+        WHERE  ORDER_PD_ID IN <foreach collection="salesIdsVo" item="item" open="(" separator="," close=")">#{item.orderPdId}</foreach>
+    </update>
+    <update id="changeOrderStatus" parameterType="com.onlive.common.vo.SalesVo">
+        /*AdminMapper.changeOrderStatus*/
+        UPDATE ORDERS
+        SET    ORDER_STATUS = #{orderStatus}
+        WHERE  SEL_ID   = #{selId}
+        AND    ORDER_PD_ID IN <foreach collection="salesIdsVo" item="item" open="(" separator="," close=")">#{item.orderPdId}</foreach>
+    </update>
+    <update id="updateSellerInfo" parameterType="com.onlive.common.vo.SellerVo">
+        /*AdminMapper.updateSellerInfo*/
+        UPDATE SELLER_INFO
+        SET    SEL_NAME = IFNULL(#{selName, jdbcType=VARCHAR},SEL_NAME)
+               ,FILE_ID = IFNULL(#{fileId, jdbcType=VARCHAR},FILE_ID)
+        WHERE  SEL_ID  = #{selId}
+    </update>
+    <select id="getSellerInfo" parameterType="com.onlive.common.vo.SellerVo" resultType="com.onlive.common.vo.SellerVo">
+        /*AdminMapper.getSellerInfo*/
+        SELECT SEL_NAME
+               ,SI.FILE_ID
+               ,FILE_NAME
+               ,UPLOAD_PATH
+        FROM   SELLER_INFO SI
+               LEFT JOIN FILE_INFO FI
+                      ON SI.FILE_ID = FI.FILE_ID 
+        WHERE SEL_ID = #{selId}
+    </select>
+    <select id="getRegionList" resultType="java.util.HashMap">
+        /*AdminMapper.getRegionList*/
+        SELECT REGION_1_CODE
+               ,REGION_1_NAME
+        FROM   REGION_ADDR
+    </select>
+    <select id="getLiveChatInfo" resultType="com.onlive.common.vo.SellerVo$SellerLiveVo">
+        /*AdminMapper.getLiveChatInfo*/
+        SELECT SEL_STREAM_KEY, SEL_CHAT_KEY
+        FROM   STREAMKEY
+        WHERE  SEL_ID=#{selId}
+    </select>
+</mapper>

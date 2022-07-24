@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.onlive.common.mapper.LiveMapper" >
+    <resultMap id="liveMap" type="com.onlive.common.vo.LiveVo">
+      <result column="sel_id"           property="selId" />
+      <result column="live_id"          property="liveId" />
+      <result column="cate_index"       property="cateIndex" />
+      <result column="ps_index"         property="psIndex" />
+      <result column="live_title"       property="liveTitle" />
+      <result column="file_id"          property="fileId" />
+      <result column="live_start_day"   property="liveStartDay" />
+      <result column="live_start_time"  property="liveStartTime" />
+      <result column="live_end_time"    property="liveEndTime" />
+      <result column="live_view"        property="liveView" />
+      <result column="live_status"       property="liveStatus" />
+      <result column="upload_path"      property="uploadPath" />
+      <result column="file_name"        property="fileName" />
+      <result column="region_1_code"    property="region1Code" />
+      <result column="video_id"         property="videoId" />
+      <result column="video_path"       property="videoPath" />
+      <result column="video_name"       property="videoName" />
+      
+      <collection property="livePdVo" ofType="com.onlive.common.vo.LiveVo$LivePdVo" resultMap="livePdMap"></collection>
+      <collection property="liveSellerVo" ofType="com.onlive.common.vo.LiveVo$LiveSellerVo" resultMap="liveSellerMap"></collection>
+      
+    </resultMap>
+    <resultMap id="livePdMap"           type="com.onlive.common.vo.LiveVo$LivePdVo">
+      <result column="ps_index"         property="psIndex" />
+      <result column="ps_title"         property="psTitle" />
+      <result column="ps_price"         property="psPrice" />
+      <result column="ps_post_status"    property="psPostStatus" />
+      <result column="ps_file_id"       property="psFileId" />
+      <result column="ps_upload_path"   property="psUploadPath" />
+    </resultMap>
+    <resultMap id="liveSellerMap"       type="com.onlive.common.vo.LiveVo$LiveSellerVo">
+      <result column="sel_id"           property="selId" />
+      <result column="sel_name"         property="selName" />
+      <result column="sel_upload_path"  property="selUploadPath" />
+      <result column="sel_file_id"      property="selFileId" />
+      <result column="sel_stream_key"   property="selStreamKey" />
+      <result column="sel_chat_key"     property="selChatKey" />
+    </resultMap>
+    
+    <resultMap  id="LiveVideoMap"       type="com.onlive.common.vo.LiveVo$LiveVideoVo">
+       <result column="live_id"         property="liveId" />
+       <result column="sel_stream_key"      property="selStreamKey"/>
+       <result column="video_id"        property="videoId" />
+       <result column="video_path"      property="videoPath"/>
+       <result column="video_name"      property="videoName"/>
+    </resultMap>
+    
+    <resultMap id = "seller"  type="com.onlive.common.vo.SellerVo">
+        <result      property="selId"   column="SEL_ID"     jdbcType="VARCHAR"/>
+        <result      property="selName" column="SEL_NAME"   jdbcType="VARCHAR"/>
+        <result      property="fileId"  column="FILE_ID"    jdbcType="VARCHAR"/>
+        <association property ="sellerLiveVo" resultMap="sellerLiveVo" />
+    </resultMap>
+    <resultMap id="sellerLiveVo" type="com.onlive.common.vo.SellerVo$SellerLiveVo">
+        <result property="selStreamKey" column="SEL_STREAM_KEY" />
+        <result property="selChatId"    column="SEL_CHAT_ID" />
+    </resultMap>
+        
+    <select id="liveListHome" parameterType="String" resultMap="liveMap">
+	    /*LiveMapper.liveListHome*/
+	        SELECT
+	             LI.SEL_ID
+	             ,LI.LIVE_ID
+	             ,LI.LIVE_TITLE
+	             ,LI.LIVE_VIEW
+	             ,LI.LIVE_STATUS
+	             ,PP.PS_INDEX
+	             ,FI.FILE_ID
+	             ,FI.UPLOAD_PATH
+	             ,PP.PS_TITLE
+	             ,PP.PS_PRICE
+	             ,PP.PS_POST_STATUS
+	             ,PP.FILE_ID   AS PS_FILE_ID
+	             ,PP.UPLOAD_PATH AS PS_UPLOAD_PATH
+	             ,SS.SEL_NAME
+	             ,SS.FILE_ID   AS SEL_FILE_ID
+	             ,SS.UPLOAD_PATH AS SEL_UPLOAD_PATH
+	             ,SKEY.SEL_STREAM_KEY
+	        FROM LIVE_INFO LI 
+	   LEFT JOIN FILE_INFO FI
+	          ON LI.FILE_ID = FI.FILE_ID
+	        JOIN (SELECT PS_INDEX
+	                     ,PS_TITLE
+	                     ,PS_PRICE
+	                     ,PS_POST_STATUS
+	                     ,FI2.FILE_ID
+	                     ,FI2.UPLOAD_PATH
+	              FROM PRODUCT_POST PS, FILE_INFO FI2
+	              WHERE PS.FILE_ID = FI2.FILE_ID
+	                AND PS_POST_STATUS = 'on' ) PP
+	          ON LI.PS_INDEX= PP.PS_INDEX
+	        JOIN (SELECT SI.SEL_ID
+	                     ,SI.SEL_NAME
+	                     ,FI3.FILE_ID
+	                     ,FI3.UPLOAD_PATH             
+	              FROM SELLER_INFO SI, FILE_INFO FI3
+	              WHERE SI.FILE_ID = FI3.FILE_ID) SS
+	          ON SS.SEL_ID = LI.SEL_ID
+	        JOIN STREAMKEY SKEY
+              ON LI.SEL_ID = SKEY.SEL_ID
+  <![CDATA[WHERE CONCAT(DATE_FORMAT(LI.LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LI.LIVE_START_TIME,' %H:%i')) <=  DATE_FORMAT(#{nowDateTime},'%Y-%m-%d %H:%i') 
+	         AND CONCAT(DATE_FORMAT(LI.LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LI.LIVE_END_TIME,' %H:%i')) >= DATE_FORMAT(#{nowDateTime},'%Y-%m-%d %H:%i')]]>
+	         AND LIVE_STATUS = '1'
+	       Limit 5
+<!--   WHERE CONCAT(DATE_FORMAT(LI.LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LI.LIVE_START_TIME,' %H:%i'))<= now()]]>
+          AND CONCAT(DATE_FORMAT(LI.LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LI.LIVE_END_TIME,' %H:%i'))>= now()
+          AND LIVE_STATUS = '1' -->
+<!--          where LIVE_STATUS = '1'
+         Limit 5 -->
+
+    </select>
+    <select id="trailerListHome" parameterType="String" resultMap="liveMap">
+        /*LiveMapper.trailerListHome*/
+		 SELECT
+		        LI.SEL_ID
+		        ,LI.LIVE_ID
+		        ,LI.CATE_INDEX
+		        ,LI.LIVE_TITLE
+		        ,DATE_FORMAT(LI.LIVE_START_DAY, '%m-%d') AS LIVE_START_DAY
+		        ,DATE_FORMAT(LI.LIVE_START_TIME, '%H:%i') AS LIVE_START_TIME
+		        ,PP.PS_INDEX
+		        ,FI.FILE_ID
+		        ,FI.UPLOAD_PATH
+		        ,PP.PS_TITLE
+		        ,PP.PS_PRICE
+		        ,PP.PS_POST_STATUS
+		        ,PP.FILE_ID   AS PS_FILE_ID
+		        ,PP.UPLOAD_PATH AS PS_UPLOAD_PATH
+		        ,SI.SEL_NAME
+		    FROM LIVE_INFO LI 
+       LEFT JOIN FILE_INFO FI
+		      ON LI.FILE_ID = FI.FILE_ID
+		    JOIN (SELECT PS_INDEX
+		                 ,PS_TITLE
+		                 ,PS_PRICE
+		                 ,PS_POST_STATUS
+		                 ,FI2.FILE_ID
+		                 ,FI2.UPLOAD_PATH
+		          FROM PRODUCT_POST PS, FILE_INFO FI2
+		          WHERE PS.FILE_ID = FI2.FILE_ID
+		            AND PS_POST_STATUS = 'on'  ) PP
+		      ON LI.PS_INDEX= PP.PS_INDEX
+		    JOIN SELLER_INFO SI
+		      ON SI.SEL_ID = LI.SEL_ID
+  <![CDATA[WHERE DATE_FORMAT(LI.LIVE_START_DAY,'%Y-%m-%d') > DATE_FORMAT(#{nowDateTime},'%Y-%m-%d')]]>
+           Limit 5
+    </select>  
+    <select id="toptenListHome" parameterType="String" resultMap="liveMap">
+        /*LiveMapper.toptenListHome*/
+         SELECT
+		        LI.SEL_ID
+		        ,LI.LIVE_ID
+		        ,LI.CATE_INDEX
+		        ,LI.LIVE_TITLE
+		        ,LI.LIVE_VIEW
+		        ,DATE_FORMAT(LI.LIVE_START_DAY, '%m-%d') AS LIVE_START_DAY
+		        ,DATE_FORMAT(LI.LIVE_START_TIME, '%H:%i') AS LIVE_START_TIME
+		        ,PP.PS_INDEX
+		        ,FI.FILE_ID 
+		        ,FI.UPLOAD_PATH
+		        ,PP.PS_TITLE
+		        ,PP.PS_PRICE
+		        ,PP.PS_POST_STATUS
+		        ,PP.FILE_ID   AS PS_FILE_ID
+		        ,PP.UPLOAD_PATH AS PS_UPLOAD_PATH
+		        ,SS.SEL_NAME
+		        ,SS.FILE_ID   AS SEL_FILE_ID
+                ,SS.UPLOAD_PATH AS SEL_UPLOAD_PATH
+                ,VI.VIDEO_NAME
+                ,VI.VIDEO_PATH
+		    FROM LIVE_INFO LI 
+       LEFT JOIN FILE_INFO FI
+		      ON LI.FILE_ID = FI.FILE_ID
+		    JOIN (SELECT PS_INDEX
+		                 ,PS_TITLE
+		                 ,PS_PRICE
+		                 ,PS_POST_STATUS
+		                 ,FI2.FILE_ID
+		                 ,FI2.UPLOAD_PATH
+		          FROM PRODUCT_POST PS, FILE_INFO FI2
+		          WHERE PS.FILE_ID = FI2.FILE_ID
+		            AND PS_POST_STATUS = 'on'  ) PP
+		      ON LI.PS_INDEX= PP.PS_INDEX
+		    JOIN (SELECT SI.SEL_ID
+                     ,SI.SEL_NAME
+                     ,FI3.FILE_ID
+                     ,FI3.UPLOAD_PATH             
+	              FROM SELLER_INFO SI, FILE_INFO FI3
+	              WHERE SI.FILE_ID = FI3.FILE_ID) SS
+	          ON SS.SEL_ID = LI.SEL_ID
+	        JOIN VIDEO_INFO VI
+              ON LI.VIDEO_ID = VI.VIDEO_ID
+<![CDATA[  WHERE LI.LIVE_START_DAY >=  #{nowDateTime} - INTERVAL DAYOFWEEK(#{nowDateTime})+6 DAY
+             AND LI.LIVE_START_DAY < #{nowDateTime} - INTERVAL DAYOFWEEK(#{nowDateTime})-1 DAY  
+		ORDER BY LI.LIVE_VIEW desc
+		   Limit 10]]>
+    </select>  
+    <select id="getLiveInfo" parameterType="com.onlive.common.vo.LiveVo" resultMap="liveMap">
+        /*LiveMapper.getLiveInfo*/
+		SELECT
+		    LI.SEL_ID
+		    ,LI.LIVE_ID
+		    ,LI.LIVE_TITLE
+		    ,LI.LIVE_STATUS
+		    ,DATE_FORMAT(LI.LIVE_START_DAY, '%Y-%m-%d') AS LIVE_START_DAY
+            ,DATE_FORMAT(LI.LIVE_START_TIME, '%H:%i') AS LIVE_START_TIME
+            ,DATE_FORMAT(LI.LIVE_END_TIME, '%H:%i') AS LIVE_END_TIME
+		    ,PP.PS_INDEX
+		    ,FI.FILE_ID 
+		    ,FI.UPLOAD_PATH
+		    ,PP.PS_TITLE
+		    ,PP.PS_PRICE
+		    ,PP.PS_POST_STATUS
+		    ,PP.FILE_ID   AS PS_FILE_ID
+		    ,PP.UPLOAD_PATH AS PS_UPLOAD_PATH
+		    ,SS.SEL_NAME
+		    ,SS.FILE_ID   AS SEL_FILE_ID
+		    ,SS.UPLOAD_PATH AS SEL_UPLOAD_PATH
+		    ,SS.SEL_STREAM_KEY    
+		    ,SS.SEL_CHAT_KEY  
+		FROM LIVE_INFO LI 
+   LEFT JOIN FILE_INFO FI
+		  ON LI.FILE_ID = FI.FILE_ID
+		JOIN (SELECT PS_INDEX
+		             ,PS_TITLE
+		             ,PS_PRICE
+		             ,PS_POST_STATUS
+		             ,FI2.FILE_ID
+		             ,FI2.UPLOAD_PATH
+		      FROM PRODUCT_POST PS, FILE_INFO FI2
+		      WHERE PS.FILE_ID = FI2.FILE_ID
+		        AND PS_POST_STATUS = 'on'  ) PP
+		  ON LI.PS_INDEX= PP.PS_INDEX
+		JOIN (SELECT SI.SEL_ID
+		             ,SI.SEL_NAME
+		             ,SKEY.SEL_STREAM_KEY
+		             ,SKEY.SEL_CHAT_KEY
+		             ,FI3.FILE_ID
+		             ,FI3.UPLOAD_PATH             
+		      FROM SELLER_INFO SI, FILE_INFO FI3 , STREAMKEY SKEY
+		      WHERE SI.FILE_ID = FI3.FILE_ID
+		        AND SKEY.SEL_ID = SI.SEL_ID) SS
+		  ON SS.SEL_ID = LI.SEL_ID
+	   WHERE LIVE_ID = #{liveId}
+    </select>
+    <select id="getReplayInfo" parameterType="com.onlive.common.vo.LiveVo" resultMap="liveMap">
+        /*LiveMapper.getReplayInfo*/
+        SELECT
+            LI.SEL_ID
+            ,LI.LIVE_ID
+            ,LI.LIVE_TITLE
+            ,LI.LIVE_VIEW
+            ,DATE_FORMAT(LI.LIVE_START_DAY, '%Y-%m-%d') AS LIVE_START_DAY
+            ,DATE_FORMAT(LI.LIVE_END_TIME, '%H:%i') AS LIVE_END_TIME
+            ,PP.PS_INDEX
+            ,FI.FILE_ID 
+            ,FI.UPLOAD_PATH
+            ,PP.PS_TITLE
+            ,PP.PS_PRICE
+            ,PP.PS_POST_STATUS
+            ,PP.FILE_ID   AS PS_FILE_ID
+            ,PP.UPLOAD_PATH AS PS_UPLOAD_PATH
+            ,SS.SEL_NAME
+            ,SS.FILE_ID   AS SEL_FILE_ID
+            ,SS.UPLOAD_PATH AS SEL_UPLOAD_PATH
+            ,SS.SEL_STREAM_KEY    
+            ,SS.SEL_CHAT_KEY
+            ,VI.VIDEO_PATH
+            ,VI.VIDEO_NAME  
+        FROM LIVE_INFO LI 
+   LEFT JOIN FILE_INFO FI
+          ON LI.FILE_ID = FI.FILE_ID
+        JOIN (SELECT PS_INDEX
+                     ,PS_TITLE
+                     ,PS_PRICE
+                     ,PS_POST_STATUS
+                     ,FI2.FILE_ID
+                     ,FI2.UPLOAD_PATH
+              FROM PRODUCT_POST PS, FILE_INFO FI2
+              WHERE PS.FILE_ID = FI2.FILE_ID
+                AND PS_POST_STATUS = 'on'  ) PP
+          ON LI.PS_INDEX= PP.PS_INDEX
+        JOIN (SELECT SI.SEL_ID
+                     ,SI.SEL_NAME
+                     ,SKEY.SEL_STREAM_KEY
+                     ,SKEY.SEL_CHAT_KEY
+                     ,FI3.FILE_ID
+                     ,FI3.UPLOAD_PATH             
+              FROM SELLER_INFO SI, FILE_INFO FI3 , STREAMKEY SKEY
+              WHERE SI.FILE_ID = FI3.FILE_ID
+                AND SKEY.SEL_ID = SI.SEL_ID) SS
+          ON SS.SEL_ID = LI.SEL_ID
+   LEFT JOIN VIDEO_INFO VI
+          ON LI.VIDEO_ID = VI.VIDEO_ID 
+       WHERE LIVE_ID = #{liveId}
+    </select>
+    <select id="getSellerLiveInfo" parameterType="com.onlive.common.vo.LiveVo" resultMap="seller">
+        /*LiveMapper.getSellerLiveInfo*/
+        SELECT SEL_NAME
+              ,FILE_ID
+              ,SEL_STREAM_KEY
+              ,SEL_CHAT_ID
+        FROM  SELLER_INFO SIN, SELLER_LIVE SLV
+        WHERE SIN.SEL_ID = #{selId}
+          AND SIN.SEL_ID = SLV.SEL_ID 
+    </select>
+    <select id="getSaleLiveInfo" parameterType="com.onlive.common.vo.LiveVo" resultType="com.onlive.common.vo.PdPostVo">
+        /*LiveMapper.getSaleLiveInfo*/
+        SELECT PS_TITLE
+              ,PS_PRICE
+              ,PS_DISCOUNT
+        FROM  PRODUCT_POST
+        WHERE SEL_ID   = #{selId}
+          AND PS_INDEX = #{psIndex}
+    </select>
+    <select id="hometownLiveList" parameterType="String" resultMap="liveMap">
+     /*LiveMapper.hometownLiveList*/
+        SELECT
+                LI.SEL_ID
+                ,LI.LIVE_ID
+                ,LI.CATE_INDEX
+                ,LI.LIVE_TITLE
+                ,LI.LIVE_VIEW
+                ,DATE_FORMAT(LI.LIVE_START_DAY, '%Y-%m-%d') AS LIVE_START_DAY
+                ,DATE_FORMAT(LI.LIVE_START_TIME, '%H:%i') AS LIVE_START_TIME
+                ,DATE_FORMAT(LI.LIVE_END_TIME, '%H:%i') AS LIVE_END_TIME
+                ,PP.PS_INDEX
+                ,FI.FILE_ID 
+                ,FI.UPLOAD_PATH
+                ,PP.PS_TITLE
+                ,PP.PS_PRICE
+                ,PP.PS_POST_STATUS
+                ,PP.FILE_ID   AS PS_FILE_ID
+                ,PP.UPLOAD_PATH AS PS_UPLOAD_PATH
+                ,SS.SEL_NAME
+                ,SS.FILE_ID   AS SEL_FILE_ID
+                ,SS.UPLOAD_PATH AS SEL_UPLOAD_PATH
+            FROM LIVE_INFO LI 
+       LEFT JOIN FILE_INFO FI
+              ON LI.FILE_ID = FI.FILE_ID
+            JOIN (SELECT PS_INDEX
+                         ,PS_TITLE
+                         ,PS_PRICE
+                         ,PS_POST_STATUS
+                         ,FI2.FILE_ID
+                         ,FI2.UPLOAD_PATH
+                  FROM PRODUCT_POST PS, FILE_INFO FI2
+                  WHERE PS.FILE_ID = FI2.FILE_ID
+                    AND PS_POST_STATUS = 'on'  ) PP
+              ON LI.PS_INDEX= PP.PS_INDEX
+            JOIN (SELECT SI.SEL_ID
+                         ,SI.SEL_NAME
+                         ,FI3.FILE_ID
+                         ,FI3.UPLOAD_PATH             
+                  FROM SELLER_INFO SI, FILE_INFO FI3
+                  WHERE SI.FILE_ID = FI3.FILE_ID) SS
+              ON SS.SEL_ID = LI.SEL_ID
+            JOIN REGION_ADDR RA
+              ON LI.REGION_1_CODE = RA.REGION_1_CODE
+             WHERE RA.REGION_1_NAME LIKE '%${location}%'
+    </select> 
+     
+    <select id="categoryLiveList" parameterType="String" resultMap="liveMap">
+    /*LiveMapper.categoryLiveList*/
+	    SELECT
+	            LI.SEL_ID
+	            ,LI.LIVE_ID
+	            ,LI.CATE_INDEX
+	            ,LI.LIVE_TITLE
+	            ,LI.LIVE_VIEW
+	            ,LI.LIVE_STATUS
+                ,DATE_FORMAT(LI.LIVE_START_DAY, '%Y-%m-%d') AS LIVE_START_DAY
+                ,DATE_FORMAT(LI.LIVE_START_TIME, '%H:%i') AS LIVE_START_TIME
+                ,DATE_FORMAT(LI.LIVE_END_TIME, '%H:%i') AS LIVE_END_TIME
+	            ,PP.PS_INDEX
+	            ,FI.FILE_ID 
+	            ,FI.UPLOAD_PATH
+	            ,PP.PS_TITLE
+	            ,PP.PS_PRICE
+	            ,PP.PS_POST_STATUS
+	            ,PP.FILE_ID   AS PS_FILE_ID
+	            ,PP.UPLOAD_PATH AS PS_UPLOAD_PATH
+	            ,SS.SEL_NAME
+	            ,SS.FILE_ID   AS SEL_FILE_ID
+	            ,SS.UPLOAD_PATH AS SEL_UPLOAD_PATH
+	            ,SS.SEL_STREAM_KEY
+	            ,VI.VIDEO_PATH
+                ,VI.VIDEO_NAME
+	        FROM LIVE_INFO LI 
+       LEFT JOIN FILE_INFO FI
+	          ON LI.FILE_ID = FI.FILE_ID
+	        JOIN (SELECT PS_INDEX
+	                     ,PS_TITLE
+	                     ,PS_PRICE
+	                     ,PS_POST_STATUS
+	                     ,FI2.FILE_ID
+	                     ,FI2.UPLOAD_PATH
+	              FROM PRODUCT_POST PS, FILE_INFO FI2
+	              WHERE PS.FILE_ID = FI2.FILE_ID
+	                AND PS_POST_STATUS = 'on'  ) PP
+	          ON LI.PS_INDEX= PP.PS_INDEX
+	        JOIN (SELECT SI.SEL_ID
+	                     ,SI.SEL_NAME
+	                     ,SKEY.SEL_STREAM_KEY
+	                     ,FI3.FILE_ID
+	                     ,FI3.UPLOAD_PATH             
+	              FROM  SELLER_INFO SI, FILE_INFO FI3, STREAMKEY SKEY
+	              WHERE SI.FILE_ID = FI3.FILE_ID
+	                AND SKEY.SEL_ID = SI.SEL_ID) SS
+	          ON SS.SEL_ID = LI.SEL_ID
+	   LEFT JOIN VIDEO_INFO VI
+              ON LI.VIDEO_ID = VI.VIDEO_ID 
+	       WHERE LI.CATE_INDEX = #{category}
+    <!-- <![CDATA[AND CONCAT(CONCAT(TO_CHAR(LIVE_START_DAY,'YYYY-MM-DD'),' '),TO_CHAR(LIVE_END_TIME,'HH24:mi')) < TO_CHAR(SYSDATE,'YYYY-MM-DD HH24:mi')]]> -->
+    </select>
+    <select id="searchLiveList" parameterType="String" resultMap="liveMap">
+    /*LiveMapper.categoryLiveList*/
+        SELECT
+                LI.SEL_ID
+                ,LI.LIVE_ID
+                ,LI.CATE_INDEX
+                ,LI.LIVE_TITLE
+                ,LI.LIVE_VIEW
+                ,LI.LIVE_STATUS
+                ,DATE_FORMAT(LI.LIVE_START_DAY, '%Y-%m-%d') AS LIVE_START_DAY
+                ,DATE_FORMAT(LI.LIVE_START_TIME, '%H:%i') AS LIVE_START_TIME
+                ,DATE_FORMAT(LI.LIVE_END_TIME, '%H:%i') AS LIVE_END_TIME
+                ,PP.PS_INDEX
+                ,FI.FILE_ID 
+                ,FI.UPLOAD_PATH
+                ,PP.PS_TITLE
+                ,PP.PS_PRICE
+                ,PP.PS_POST_STATUS
+                ,PP.FILE_ID   AS PS_FILE_ID
+                ,PP.UPLOAD_PATH AS PS_UPLOAD_PATH
+                ,SS.SEL_NAME
+                ,SS.FILE_ID   AS SEL_FILE_ID
+                ,SS.UPLOAD_PATH AS SEL_UPLOAD_PATH
+                ,SS.SEL_STREAM_KEY
+                ,VI.VIDEO_PATH
+                ,VI.VIDEO_NAME
+            FROM LIVE_INFO LI 
+       LEFT JOIN FILE_INFO FI
+              ON LI.FILE_ID = FI.FILE_ID
+            JOIN (SELECT PS_INDEX
+                         ,PS_TITLE
+                         ,PS_PRICE
+                         ,PS_POST_STATUS
+                         ,FI2.FILE_ID
+                         ,FI2.UPLOAD_PATH
+                  FROM PRODUCT_POST PS, FILE_INFO FI2
+                  WHERE PS.FILE_ID = FI2.FILE_ID
+                    AND PS_POST_STATUS = 'on'  ) PP
+              ON LI.PS_INDEX= PP.PS_INDEX
+            JOIN (SELECT SI.SEL_ID
+                         ,SI.SEL_NAME
+                         ,SKEY.SEL_STREAM_KEY
+                         ,FI3.FILE_ID
+                         ,FI3.UPLOAD_PATH             
+                  FROM  SELLER_INFO SI, FILE_INFO FI3, STREAMKEY SKEY
+                  WHERE SI.FILE_ID = FI3.FILE_ID
+                    AND SKEY.SEL_ID = SI.SEL_ID) SS
+              ON SS.SEL_ID = LI.SEL_ID
+       LEFT JOIN VIDEO_INFO VI
+              ON LI.VIDEO_ID = VI.VIDEO_ID 
+           WHERE LI.LIVE_TITLE LIKE CONCAT('%',#{query},'%')
+              OR PP.PS_TITLE   LIKE CONCAT('%',#{query},'%')
+    <!-- <![CDATA[AND CONCAT(CONCAT(TO_CHAR(LIVE_START_DAY,'YYYY-MM-DD'),' '),TO_CHAR(LIVE_END_TIME,'HH24:mi')) < TO_CHAR(SYSDATE,'YYYY-MM-DD HH24:mi')]]> -->
+    </select>
+    <select id="nowDateTime" resultType="String"> 
+        select now() from live_info
+    </select>
+    <update id="updateLiveStatus" parameterType="String">
+        /*LiveMapper.updateLiveStatus*/
+                UPDATE LIVE_INFO  
+            SET LIVE_STATUS = CASE
+   <![CDATA[  WHEN CONCAT(DATE_FORMAT(LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LIVE_START_TIME,' %H:%i')) <=  DATE_FORMAT(#{nowDateTime},'%Y-%m-%d %H:%i') 
+               AND CONCAT(DATE_FORMAT(LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LIVE_END_TIME,' %H:%i')) >=  DATE_FORMAT(#{nowDateTime},'%Y-%m-%d %H:%i') 
+              THEN 1
+             WHEN CONCAT(DATE_FORMAT(LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LIVE_END_TIME,' %H:%i')) <  DATE_FORMAT(#{nowDateTime},'%Y-%m-%d %H:%i') ]]>
+             THEN 2
+            ELSE 0
+           END 
+         WHERE DATE_FORMAT(LIVE_START_DAY,'%Y-%m-%d') = DATE_FORMAT(#{nowDateTime},'%Y-%m-%d') 
+         AND LIVE_STATUS IN (0,1) 
+<!--         UPDATE LIVE_INFO  
+		    SET LIVE_STATUS = CASE
+		     <![CDATA[WHEN CONCAT(DATE_FORMAT(LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LIVE_START_TIME,' %H:%i')) <= DATE_FORMAT(now(),'%Y-%m-%d %H:%i')
+                AND CONCAT(DATE_FORMAT(LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LIVE_END_TIME,' %H:%i')) >= DATE_FORMAT(now(),'%Y-%m-%d %H:%i')
+                THEN 1
+		     WHEN CONCAT(DATE_FORMAT(LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LIVE_END_TIME,' %H:%i')) < DATE_FORMAT(now(),'%Y-%m-%d %H:%i')
+                THEN 2
+		    ELSE 0
+		   END
+		 WHERE CONCAT(DATE_FORMAT(LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LIVE_START_TIME,' %H:%i')) <= DATE_FORMAT(now(),'%Y-%m-%d %H:%i')]]>
+		   AND LIVE_STATUS IN (0,1) -->
+    </update>
+    
+    <select id="getLiveStreamInfo" resultMap="LiveVideoMap">
+    /*LiveMapper.getLiveNowInfo*/
+        SELECT LI.LIVE_ID
+               ,SK.SEL_STREAM_KEY
+		FROM   LIVE_INFO LI 
+		JOIN   STREAMKEY SK
+		  ON   LI.SEL_ID = SK.SEL_ID
+		WHERE  LIVE_STATUS = '1'
+		  AND  VIDEO_ID   = '0'
+    </select>
+    <update id="updateLiveVideoId">
+        /*LiveMapper.updateLiveVideoId*/
+        <foreach collection="list" item="i">
+	        UPDATE LIVE_INFO
+	        SET    VIDEO_ID = #{i.videoId}
+	        WHERE  LIVE_ID  = #{i.liveId}
+        </foreach>
+    </update>
+    <insert id="setLiveVideoInfo">
+        /*LiveMapper.setLiveVideoInfo*/
+            INSERT INTO VIDEO_INFO(
+                VIDEO_ID
+                ,VIDEO_PATH
+                ,VIDEO_NAME
+            )VALUES
+            <foreach collection="list" item="vd" separator="," >
+            (
+                #{vd.videoId}
+                ,#{vd.videoPath}
+                ,#{vd.videoName}
+            )
+            </foreach>
+    </insert>
+    <update id="setLiveView">
+        /*LiveMapper.setLiveView*/
+        UPDATE LIVE_INFO
+        SET    LIVE_VIEW = IFNULL(#{liveView},LIVE_VIEW+1)
+        WHERE  LIVE_ID = #{liveId}
+    </update>
+    <select id="getLiveView" parameterType="com.onlive.common.vo.LiveVo" resultType="int">
+        /*LiveMapper.getLiveView*/
+        SELECT LIVE_VIEW
+        FROM   LIVE_INFO
+        WHERE  LIVE_ID = #{liveId}
+    </select>
+</mapper>

@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.onlive.common.mapper.MyPageMapper">
+	<resultMap id="addressMap" type="com.onlive.common.vo.AddressVo">
+	  <id column="user_id"             property="userId" />
+	  <result column="addr_index"      property="addrIndex" />
+	  <result column="addr_name"       property="addrName" />
+	  <result column="addr_recipient"  property="addrRecipient" />
+	  <result column="addr_postcode"   property="addrPostcode" />
+	  <result column="addr_roadaddr"   property="addrRoadaddr" />
+	  <result column="addr_detailaddr" property="addrDetailaddr" />
+	  <result column="addr_contact"    property="addrContact" />
+	  <result column="addr_yn"         property="addrYn" />
+	</resultMap>
+	<resultMap id="orderMap"    type="com.onlive.common.vo.OrderVo">
+      <result column="order_id"        property="orderId" />
+      <result column="order_date"      property="orderDate" />
+      <collection property="userOrderListVo" ofType="com.onlive.common.vo.OrderVo$UserOrderListVo" resultMap="userOrderListMap"></collection>
+    </resultMap>
+	<resultMap id="userOrderListMap"   type="com.onlive.common.vo.OrderVo$UserOrderListVo">
+       <result column="order_id"        property="orderId" />
+       <result column="order_pd_id"     property="orderPdId" />
+       <result column="ps_index"        property="psIndex" />
+       <result column="pd_id"           property="pdId" />
+       <result column="pd_count"        property="pdCount" />
+       <result column="pd_count_price"  property="pdCountPrice" />
+       <result column="payment_status"  property="paymentStatus" />
+       <result column="order_status"    property="orderStatus" />
+       <result column="sel_name"        property="selName" />
+       <result column="ps_title"        property="psTitle" />
+       <result column="upload_path"     property="uploadPath" />
+       <result column="file_Id"         property="fileId" />
+       <result column="order_date"      property="orderDate" />
+    </resultMap>
+    <resultMap id="orderStatusCountMap"    type="com.onlive.common.vo.OrderVo$OrderStatusCountVo">
+	   <result column="payment_status"        property="paymentStatus" />
+	   <result column="payment_status_count"  property="paymentStatusCount" />
+       <result column="order_status"          property="orderStatus" />
+       <result column="order_status_count"    property="orderStatusCount" />
+    </resultMap>
+	
+	<select id="getUserOrderStatusCount" parameterType="com.onlive.common.vo.OrderVo" resultMap="orderStatusCountMap">
+	   /* MyPageMapper.getUserOrderStatusCount */
+		   SELECT PAYMENT_STATUS
+	              ,COUNT(PAYMENT_STATUS) AS PAYMENT_STATUS_COUNT
+	              ,ORDER_STATUS
+	              ,COUNT(ORDER_STATUS)  AS ORDER_STATUS_COUNT
+	<!-- 	          <choose>
+			         <when test="paymentStatus != null">
+			            PAYMENT_STATUS
+			            ,COUNT(PAYMENT_STATUS) AS PAYMENT_STATUS_COUNT
+			         </when>
+			         <when test="orderStatus != null">
+	                    ORDER_STATUS
+	                    ,COUNT(ORDER_STATUS)  AS ORDER_STATUS_COUNT
+	                 </when>
+			         <otherwise>
+			            PAYMENT_STATUS
+	                    ,COUNT(PAYMENT_STATUS) AS PAYMENT_STATUS_COUNT
+			            ,ORDER_STATUS
+			            ,COUNT(ORDER_STATUS)  AS ORDER_STATUS_COUNT
+			         </otherwise>
+			        </choose> -->
+		   FROM  ORDERS
+          WHERE  DATE_FORMAT(DATE_ADD(ORDER_DATE,interval 1 month),'%Y-%m-%d')
+            AND  USER_ID=#{userId}
+<!--         <if test="paymentStatus != null">
+            AND PAYMENT_STATUS = #{paymentStatus}
+        </if>
+        <if test="orderStatus != null">
+           AND ORDER_STATUS = #{orderStatus} 
+        </if> -->
+       GROUP BY PAYMENT_STATUS, ORDER_STATUS
+	</select>
+	<select id="getUserOrderInfoList" parameterType="com.onlive.common.vo.OrderVo" resultMap="orderMap">
+	   /* MyPageMapper.getUserOrderInfoList */
+		 SELECT 
+		        ORD.ORDER_ID
+		        ,ORD.ORDER_PD_ID
+		        ,ORD.PS_INDEX
+		        ,ORD.PD_COUNT
+		        ,ORD.PD_COUNT_PRICE
+	 	        ,ORD.PAYMENT_STATUS
+	 	        ,ORD.ORDER_STATUS
+		        ,SL.SEL_NAME
+		        ,PF.PS_TITLE
+		        ,PF.UPLOAD_PATH
+		        ,PF.FILE_ID
+		        ,DATE_FORMAT(ORD.ORDER_DATE,'%Y.%m.%d') AS ORDER_DATE
+           FROM ORDERS ORD 
+		   LEFT JOIN  SELLER_INFO SL
+				ON    ORD.SEL_ID = SL.SEL_ID
+		   LEFT JOIN (SELECT PP.PS_INDEX
+				            ,PP.PS_TITLE
+				            ,FL.UPLOAD_PATH
+				            ,FL.FILE_ID
+				       FROM PRODUCT_POST PP
+				            ,FILE_INFO FL
+				      WHERE PP.FILE_ID = FL.FILE_ID) PF
+				ON ORD.PS_INDEX = PF.PS_INDEX
+		 WHERE  USER_ID = #{userId}
+         <if test="orderDate != null and orderStatus == null">
+          <choose>
+            <when test="orderDate == 1 or orderDate == 3">
+                AND  DATE_FORMAT(DATE_ADD(ORD.ORDER_DATE,interval 1 month),'%Y-%m-%d')
+            </when>
+            <otherwise>
+                AND  (DATE_FORMAT(ord.order_date,'%Y') = #{orderDate})        
+            </otherwise>
+           </choose>         
+         </if>  
+         <if test="orderStatus != null">
+          <choose>
+            <when test="orderStatus ==20 or orderStatus ==21">
+                AND  DATE_FORMAT(DATE_ADD(ORD.ORDER_DATE,interval 1 month),'%Y-%m-%d')
+                AND  payment_status = #{orderStatus}
+                AND  order_status IS NULL
+            </when>
+            <otherwise>
+                AND DATE_FORMAT(DATE_ADD(ORD.ORDER_DATE,interval 1 month),'%Y-%m-%d')
+                AND order_status = #{orderStatus}       
+            </otherwise>
+           </choose>
+         </if>                
+         ORDER BY ORDER_ID DESC
+	</select>
+	    <select id="getCancelTotalPrice" parameterType="com.onlive.common.vo.SalesVo" resultType="com.onlive.common.vo.OrderVo$CancelOrderVo">
+        /*MyPageMapper.getCancelTotalPrice*/
+    
+        SELECT FN.ORDER_ID
+               ,SUM(FN.TOTAL) AS CANCEL_ORDER_PRICE 
+        FROM
+            (SELECT ORDS.ORDER_ID
+                    ,ORDS.PS_INDEX
+                    ,CC.CT3
+                    ,ORDS.PD_COUNT_PRICE
+                    ,CC.PS_DELIVERY
+                    ,(PD_COUNT_PRICE+IFNULL(CC.PS_DELIVERY,0)) AS TOTAL
+             FROM   ORDERS ORDS
+             LEFT JOIN 
+                        (SELECT ORD.ORDER_ID
+                                ,ORD.PS_INDEX
+                                ,(ORD.CT1 - PDORD.CT2) CT3
+                                ,ORD.PS_DELIVERY
+                         FROM 
+                                (SELECT   ORDER_ID
+                                          ,PS_INDEX
+                                          ,PS_DELIVERY
+                                          ,COUNT(PS_DELIVERY) AS CT1
+                                 FROM     ORDERS
+                                 WHERE    ORDER_ID = #{orderId}
+                                 AND      PS_INDEX = #{psIndex} 
+                                 AND      PS_DELIVERY != 0
+                                 GROUP BY ORDER_ID,PS_INDEX, PS_DELIVERY) ORD
+                                ,(SELECT  ORDER_ID,PS_INDEX
+                                          ,COUNT(PS_INDEX) AS CT2
+                                 FROM     ORDERS
+                                 WHERE    ORDER_PD_ID = #{orderPdId}
+                                 AND      PS_DELIVERY != 0
+                                 GROUP BY ORDER_ID,PS_INDEX, PS_DELIVERY) PDORD
+                         WHERE ORD.ORDER_ID = PDORD.ORDER_ID
+                         AND ORD.PS_INDEX = PDORD.PS_INDEX) CC
+             ON  ORDS.ORDER_ID = CC.ORDER_ID
+             AND ORDS.PS_INDEX = CC.PS_INDEX  
+             AND CC.CT3 = 0
+             WHERE ORDER_PD_ID = #{orderPdId}
+             ) FN
+        GROUP BY FN.ORDER_ID
+    
+    </select>
+	<insert id ="insertCancelOrderUser" parameterType="com.onlive.common.vo.SalesVo">
+	   INSERT INTO CANCEL_ORDER(
+            CANCEL_ORDER_ID     
+            ,ORDER_ID
+            ,CANCEL_ORDER_PRICE
+        )VALUES(
+            #{cancelOrderId}
+            ,#{orderId}
+            ,#{cancelOrderPrice}
+        )
+	</insert>
+	<update id="cancelOrderProcess" parameterType="com.onlive.common.vo.OrderVo">
+	   /* MyPageMapper.cancelOrderProcess*/
+	   UPDATE ORDERS
+	   SET    ORDER_STATUS = '40'
+	   WHERE  ORDER_PD_ID = #{orderPdId}
+	</update>
+	<update id="confirmationProcess" parameterType="com.onlive.common.vo.OrderVo">
+	   /* MyPageMapper.confirmationProcess */
+        UPDATE ORDERS
+        SET    ORDER_STATUS = '50' 
+        WHERE  ORDER_PD_ID = #{orderPdId}
+    </update>
+    <select id="getAddress" parameterType="String" resultMap="addressMap">
+        /* MyPageMapper.getAddress */
+        SELECT  addr_index
+                , addr_name
+                , addr_recipient
+                , addr_postcode
+                , addr_roadaddr
+                , addr_detailaddr
+                , addr_contact
+                , addr_yn
+        FROM    user_address
+        WHERE   user_id = #{userId}
+        ORDER BY addr_yn            DESC
+                 ,addr_index        ASC
+    </select>
+    <select id="getSelectAddress" parameterType="com.onlive.common.vo.AddressVo" resultType="com.onlive.common.vo.AddressVo">
+        /* MyPageMapper.getAddress */
+        SELECT  addr_index
+                , addr_name
+                , addr_recipient
+                , addr_postcode
+                , addr_roadaddr
+                , addr_detailaddr
+                , addr_contact
+                , addr_yn
+        FROM    user_address
+        WHERE   user_id     = #{userId}
+          AND   addr_index  = #{addrIndex}
+    </select>
+    <delete id="deleteByAddress" parameterType="com.onlive.common.vo.AddressVo">
+        /* MyPageMapper.deleteByAddress */
+        DELETE 
+            FROM    user_address 
+            WHERE   user_id=#{userId} 
+              AND   addr_index=${addrIndex}
+    </delete>
+    <update id="updateAddrNo" parameterType="com.onlive.common.vo.AddressVo">
+        /* MyPageMapper.updateAddrNo */
+        UPDATE  user_address
+        SET     addr_yn = 'N'
+        WHERE   USER_ID = #{userId}
+    </update>
+    <insert id="setAddress" parameterType="com.onlive.common.vo.AddressVo">
+        /* MyPageMapper.setAddress */
+        INSERT INTO user_address 
+        VALUES(#{userId}
+                ,(SELECT num
+                    from (SELECT IFNULL(MAX(addr_index),0)+1 as num
+                            FROM user_address 
+                           WHERE user_id=#{userId}) ind)
+                ,#{addrName, jdbcType=VARCHAR}
+                ,#{addrRecipient, jdbcType=VARCHAR}
+                ,#{addrPostcode, jdbcType=VARCHAR}
+                ,#{addrRoadaddr, jdbcType=VARCHAR}
+                ,#{addrDetailaddr, jdbcType=VARCHAR}
+                ,#{addrContact, jdbcType=VARCHAR}
+                ,#{addrYn, jdbcType=CHAR})
+    </insert>
+
+    <update id ="setUserDetails" parameterType="com.onlive.common.vo.UserVo" >
+        /* MyPageMapper.setUserDetails */
+        UPDATE  USER_INFO
+        SET     USER_NICKNAME = IFNULL(#{userNickname, jdbcType=VARCHAR},USER_NICKNAME)
+                , USER_PHONE = IFNULL(#{userPhone, jdbcType=VARCHAR},USER_PHONE)
+        WHERE   USER_ID = #{userId}
+    </update>
+    <select id="comparePw" parameterType="com.onlive.common.vo.UserVo" resultType="String">
+        /*MyPageMapper.comparePw*/
+        SELECT  USER_PW
+        FROM    USER_INFO
+        WHERE   USER_ID = #{userId}
+    </select>
+    <update id ="setUserPw" parameterType="com.onlive.common.vo.UserVo">
+        /* MyPageMapper.setUserPw */
+        UPDATE  USER_INFO
+        SET     USER_PW = #{userPw}
+        WHERE   USER_ID = #{userId}        
+    </update>
+    <select id="getBasicAddress" parameterType="String" resultType="com.onlive.common.vo.AddressVo">
+        /* MyPageMapper.getBasicAddress */
+        SELECT  addr_index
+                , addr_name
+                , addr_recipient
+                , addr_postcode
+                , addr_roadaddr
+                , addr_detailaddr
+                , addr_contact
+                , addr_yn
+        FROM    user_address
+        WHERE   user_id = #{userId}
+        AND     addr_yn = 'Y'
+        ORDER BY addr_yn            DESC
+                 ,addr_index        ASC
+    </select>
+    
+</mapper>

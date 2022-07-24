@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+    <!-- home 기본 레이아웃 -->
+    <definition name="home_layout" template="/WEB-INF/tiles/home_layout.jsp">
+        <put-attribute name="header" value="" />
+        <put-attribute name="body" value="" />
+        <put-attribute name="footer" value="" />
+    </definition>
+    
+    <definition name="/home" extends="home_layout">
+        <put-attribute name="header" value="/WEB-INF/views/header/shop_header.jsp" />
+        <put-attribute name="body" value="/WEB-INF/views/home.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/views/header/footer.jsp" />
+    </definition>
+    <!-- shop 폴더 안 jsp 경로 설정 -->
+    <definition name="/shop/*" extends="home_layout">
+        <put-attribute name="header" value="/WEB-INF/views/header/shop_header.jsp" />
+        <put-attribute name="body" value="/WEB-INF/views/shop/{1}.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/views/header/footer.jsp" />
+    </definition>
+    <!-- mypage -->
+    <definition name="/mypage/*" extends="home_layout">
+        <put-attribute name="header" value="/WEB-INF/views/header/shop_header.jsp" />
+        <put-attribute name="body" value="/WEB-INF/views/mypage/{1}.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/views/header/footer.jsp" />
+    </definition>
+    <!-- login 기본 레이아웃 -->
+    <definition name="login_layout" template="/WEB-INF/tiles/login_layout.jsp">
+        <put-attribute name="body" value="" />
+    </definition>
+    
+    <definition name="/login/*" extends="login_layout">
+        <put-attribute name="body" value="/WEB-INF/views/login/{1}.jsp" />
+    </definition>
+    
+    <definition name="tool_layout" template="/WEB-INF/tiles/tool_layout.jsp">
+        <put-attribute name="header" value="" />
+        <put-attribute name="body" value="" />
+        <put-attribute name="footer" value="" />
+    </definition>
+    <definition name="/tool/*" extends="tool_layout">
+        <put-attribute name="header" value="/WEB-INF/views/header/tool_header.jsp" />
+        <put-attribute name="body" value="/WEB-INF/views/tool/{1}.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/views/header/footer.jsp" />
+    </definition>
+</tiles-definitions>
