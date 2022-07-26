@@ -614,7 +614,8 @@ WHERE  USER_ID = '유저ID'       #유저ID
 ### 🍭**2-8-2. 판매글 등록: 상품 추가**
 * 같은 상품을 여러 판매글로 등록시 '판매 상품 추가' 목록에서 상품을 체크한 후 등록하면 해당 상품에 대해 등록한 여러 판매글에 동일한 정보를 제공합니다.  
 ![상품 추가](https://user-images.githubusercontent.com/86868936/180941774-3cc6df93-1975-4853-8d97-3f6c96021566.png)
-* foreach 문을 사용해 판매글에 추가되는 상품 list를 PRODUCT_POST_ADD table에 등록합니다.
+* foreach 문을 사용해 판매글에 추가되는 상품 list를 PRODUCT_POST_ADD table에 등록합니다.  
+
 ```
 <insert id="createAddPdList" >
         /*AdminMapper.createAddPdList*/
