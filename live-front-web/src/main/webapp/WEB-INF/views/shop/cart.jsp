@@ -23,7 +23,8 @@
 	                       </span>
 	                   </div>
 	                   <ul class="cart_content_group_list">
-	                       <c:forEach var="cart" items="${cartList}">
+	                      <c:forEach var="cart" items="${cartList}">
+	                      <c:set var = "addDelivery" value = "0"/>
 	                       <li class="cart_content_group_item ${cart.selId}">
 	                           <article class="cart_group">
 	                               <h1 class="cart_group_header">${cart.selName}</h1>
@@ -37,16 +38,26 @@
 	                                               <li class="cart_delivery_group_pd_item ${sale.psIndex}">
 	                                                   <article class="cart_product">
 	                                                       <div class="product_select">
-			                                                   <input type="checkbox" class="selBdCheck" checked>
+			                                                   <input type="checkbox" class="selBdCheck"
+			                                                   <c:if test="${sale.psDelete == 1}">disabled</c:if>
+			                                                   <c:if test="${sale.psDelete == 0}">checked</c:if> >
 			                                               </div>
-			                                               <a href ="/live/item?pd=${sale.psIndex}" class="product_item_href">
+			                                               <div class="product_item_href">
 			                                                   <div class="product_item_img">
 			                                                     <img src="https://s3.ap-northeast-2.amazonaws.com/onlshop.shop${sale.uploadPath}/${sale.fileId}">
 			                                                   </div>
 			                                                   <div class="product_item_content">
-			                                                       <h1 class="product_item_title">${sale.psTitle}</h1>
+			                                                     <c:choose>
+			                                                         <c:when test="${sale.psDelete == 1}">
+			                                                            <div class="product_item_title">${sale.psTitle}</div>
+                                                                        <div class="text_red">주문불가</div>
+			                                                         </c:when>
+			                                                         <c:otherwise>
+			                                                            <a href ="/live/item?pd=${sale.psIndex}" class="product_item_title">${sale.psTitle}</a>
+			                                                         </c:otherwise>
+			                                                     </c:choose>
 			                                                   </div>
-			                                               </a>
+			                                               </div>
 			                                               <button type="button" class="cart_product_delete btn_del"></button>
 			                                               <ul class="cart_product_list">
 			                                                 <c:forEach var="product" items="${cartPdList}">
@@ -56,11 +67,22 @@
 			                                                           <h2 class="selling_option_item_name">${product.pdName}</h2>
 			                                                           <button type="button" class="selling_option_item_delete btn_del"></button>
 			                                                           <div class="selling_option_item_controls">
-			                                                               <div class="selling_option_item_quantity ${product.pdId}">
-			                                                                   <button type="button" class="count_btn count_minus"></button>
-			                                                                   <input type="number" maxlength="5" class="item_count" value="${product.pdCount}">
-			                                                                   <button type="button" class="count_btn count_plus"></button>
-			                                                               </div>
+																		   <c:choose>
+																			<c:when test="${sale.psDelete == 1}">
+																			     <div class="option_item_dis selling_option_item_quantity ${product.pdId}">
+																			       <button type="button" class="count_btn count_minus" disabled></button>
+																			       <input type="number" maxlength="5" class="item_count" value="${product.pdCount}" disabled>
+																			       <button type="button" class="count_btn count_plus" disabled></button>
+																			     </div>
+																			</c:when>
+																			<c:otherwise>
+																			     <div class="selling_option_item_quantity ${product.pdId}">
+																			       <button type="button" class="count_btn count_minus"></button>
+																			       <input type="number" maxlength="5" class="item_count" value="${product.pdCount}">
+																			       <button type="button" class="count_btn count_plus"></button>
+																			     </div>
+																			</c:otherwise>
+																		   </c:choose>
 			                                                               <div class="selling_option_item_price_area">
 			                                                                 <c:set var ="pd_price" value="${product.pdPrice * product.pdCount}" />
 			                                                                 <span class="selling_option_item_price">
@@ -91,11 +113,11 @@
 			                                                   </span>
 			                                               </div>
 	                                                   </article>
+	                                                   <c:set var = "addDelivery" value = "${addDelivery+delivery}"/>
 	                                               </li>
 	                                           </ul>
 	                                       </article>
 	                                    </li>
-	                                    <c:set var = "selDelivery" value = "${selDelivery+delivery}"  />
 	                                    </c:if>
 	                                  </c:forEach>
 	                               </ul>
@@ -109,7 +131,7 @@
                                                    </c:when>
                                                    <c:otherwise>
                                                        <span class="price_num">
-		                                                    <fmt:formatNumber value="${selDelivery}" pattern="#,###" />
+		                                                    <fmt:formatNumber value="${addDelivery}" pattern="#,###" />
 		                                               </span>원
                                                    </c:otherwise>
                                                 </c:choose>

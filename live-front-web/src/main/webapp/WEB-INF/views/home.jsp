@@ -3,10 +3,8 @@
 <%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<!-- <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c2dbd6c0b5c00df629f26d19c5981c33&libraries=services"></script>-->
 <sec:authentication var="user" property="principal"/>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script> 
 <div id="shop_wrap">
     <div class="shop_content">
         <div class="shop_menulist" role="presentation">
@@ -42,7 +40,7 @@
             </section>
             <div id="MainContent">
                 <section id="LiveNow" class="main_section">
-                    <div class="section_title"><span class="color_point">⚡NOW⚡</span>${user}
+                    <div class="section_title"><span class="color_point">⚡NOW⚡</span>
                     </div>
 <!--                     <div class="SortBox_wrap LiveNow_sord">
                         <a href="javascript:0;" class="SortBox_label">시청순</a>
@@ -51,11 +49,11 @@
                     <div class="ListBox_wrap">
                         <div class="ListBox_list">
                             <a href="javascript:0;" class="livenow_tab_menu" aria-selected="true">전체</a>
-                            <a href="javascript:0;" class="livenow_tab_menu">패션</a>
+<!--                             <a href="javascript:0;" class="livenow_tab_menu">패션</a>
                             <a href="javascript:0;" class="livenow_tab_menu">뷰티</a>
                             <a href="javascript:0;" class="livenow_tab_menu">푸드</a>
                             <a href="javascript:0;" class="livenow_tab_menu">라이프</a>
-                            <a href="javascript:0;" class="livenow_tab_menu">취미 · 문화생활</a>
+                            <a href="javascript:0;" class="livenow_tab_menu">취미 · 문화생활</a> -->
                         </div>                     
                     </div>
                     <div class="livenow_tab_wrap">

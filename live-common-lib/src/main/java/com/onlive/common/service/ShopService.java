@@ -96,7 +96,8 @@ public class ShopService {
         addrMap.put("addrIndex", order.getAddrIndex());
 
         order.getPaymentVo().setOrderId(order.getOrderId());
-
+        System.out.println(order);
+        
         result += shopMapper.setOrders(order);                   //주문 등록
         result += shopMapper.setOrderAddr(addrMap);              //주문한 주소 등록
         result += shopMapper.setPayment(order.getPaymentVo());   //주문 결제 등록

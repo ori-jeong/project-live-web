@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -92,11 +93,15 @@ public class AdminService {
         if(start < 0) {  //현재날짜는 시작 이전 날짜인가? 
             return "0";
         }else if(start>0 && end<0) { //시작날짜 < 현재날짜 > 종료날짜 => 라이브중 //입력한 날짜가 라이브중인 날짜이면
+            Map<String,Object> liveMap = new HashMap<>();
+            liveMap.put("selId",live.getSelId());
+            liveMap.put("liveId",live.getLiveId());
+            liveMap.put("nowDateTime", nowDateTime);
             //라이브중인 게시물이 있는지 확인
-            int count =  adminMapper.countLive1Status(nowDateTime);
+            int count =  adminMapper.countLive1Status(liveMap);
             if(count>=1) {
                 return "3";     //라이브중인 게시물이 있으면 라이브 불가로 상태 변경
-            }else {
+            }else{
                 return "1";
             }
         }else {         //종료
@@ -221,9 +226,9 @@ public class AdminService {
         //주문취소 상태코드 넣기
         salesVo.setOrderStatus("40");            
 
-        //선택한 주무번호(orderId)와 판매글(psIndex)로 총 개수(주문개수 아니고 주문 코드개수)를 구하고
-        //총 개수에 주문 개수를 빼서 1이상이면 배송비를 추가하지 않고
-        //0이면 배송비를 보여주며 해당 상품 주문 금액에 배송비를 추가해 최종적으로 보여준다
+        //선택한 주무번호(orderId)와 판매글ID(psIndex)로 총 개수(주문개수 아니고 주문 코드개수)를 구합니다.
+        //총 개수에 주문 개수를 빼서 1이상(해당 판매글에 주문한 상품이 하나 이상 존재하면)이면 배송비를 추가하지 않습니다.
+        // 0이면 해당 상품 주문 금액에 배송비를 추가해 최종 금액으로 취소처리합니다.
         //orderId, cancelOrderPrice 출력
         List<OrderVo.CancelOrderVo> cancelOrderList = new ArrayList<OrderVo.CancelOrderVo>();
         List<OrderVo.CancelOrderVo> svo = adminMapper.getCancelTotalPrice(salesVo);

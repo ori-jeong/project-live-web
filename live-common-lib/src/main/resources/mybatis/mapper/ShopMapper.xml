@@ -16,7 +16,8 @@
       <result  column="ps_title"    property="psTitle" />  
       <result  column="file_id"     property="fileId" />
        <!-- <result  column="ps_discount" property="psDiscount" />   -->
-      <result  column="ps_delivery" property="psDelivery" />  
+      <result  column="ps_delivery" property="psDelivery" /> 
+      <result  column="ps_delete" property="psDelete" /> 
       <result  column="upload_path"     property="uploadPath" />
       <result  column="file_name"     property="fileName" />
     </resultMap>
@@ -50,6 +51,7 @@
        <result column="ps_title"        property="psTitle" />
        <result column="file_id"         property="fileId" />
        <result column="ps_discount"     property="psDiscount" />
+       <result column="ps_delivery_opt" property="psDeliveryOpt" />
        <result column="ps_delivery"     property="psDelivery" />
     </resultMap>
     <resultMap id="orderPdVoMap"      type="com.onlive.common.vo.OrderVo$OrderPdVo">
@@ -117,6 +119,7 @@
 		       ,PS.PS_TITLE
 		       ,PS.FILE_ID
 		       ,PS.PS_DELIVERY
+		       ,PS.PS_DELETE
 		       ,PI.PD_ID
 		       ,PI.PD_NAME
 		       ,PI.PD_PRICE
@@ -198,6 +201,7 @@
 			   ,PS.PS_INDEX
 			   ,PS.PS_TITLE
 			   ,PS.FILE_ID
+			   ,PS.PS_DELIVERY_OPT
 			   ,PS.PS_DELIVERY
 			   ,PP.PD_ID
 			   ,PP.PD_NAME
@@ -272,11 +276,11 @@
     
     <insert id="setOrders" >
          /* ShopMapper.setOrders */
-         <selectKey keyProperty="psDeliveryOpt" resultType="com.onlive.common.vo.OrderVo$OrderPdSelVo" order="BEFORE">
+         <!-- <selectKey keyProperty="psDeliveryOpt" resultType="com.onlive.common.vo.OrderVo$OrderPdSelVo" order="BEFORE">
             SELECT PS_DELIVERY_OPT as psDeliveryOpt
             FROM   PRODUCT_POST
             WHERE  PS_INDEX IN <foreach collection = "orderPdSelVo" item="ord" separator="," open="(" close=")">#{ord.psIndex}</foreach>
-        </selectKey>
+        </selectKey> -->
             INSERT INTO ORDERS(
                 ORDER_ID
                 ,ORDER_PD_ID
@@ -304,7 +308,7 @@
                 ,#{pd.pdId}
                 ,#{pd.pdCount}
                 ,#{pd.pdCountPrice}
-                ,#{psDeliveryOpt}
+                ,#{sel.psDeliveryOpt}
                 ,#{sel.psDelivery}
                 ,#{paymentStatus}
                 <!-- ,#{orderDate} -->

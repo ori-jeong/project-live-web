@@ -144,7 +144,7 @@
         )
     </insert>
     <insert id="setStreamKey" parameterType="com.onlive.common.vo.SellerVo$SellerLiveVo">
-        /*LoginMapper.insertSellerInfo*/
+        /*LoginMapper.setStreamKey*/
         INSERT INTO STREAMKEY
             (SEL_ID
             ,SEL_STREAM_KEY

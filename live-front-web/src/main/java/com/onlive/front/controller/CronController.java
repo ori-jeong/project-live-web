@@ -46,8 +46,7 @@ public class CronController {
     public void liveVideoSave() throws IOException, ParseException{
         log.info("라이브 상태 수정 및 영상 저장");
         //현재 라이브 중인 라이브 상태 변경(대기->라이브중, 라이브중-> 종료)
-        int a = liveService.updateLiveStatus();
-        System.out.println("처리 : "+a);
+        liveService.updateLiveStatus();
         //현재 라이브 중이면서 영상 파일 id가 없는 라이브 정보 가져오기
         List<LiveVo.LiveVideoVo> live = liveService.getLiveStreamInfo();
         List<LiveVo.LiveVideoVo> video = new ArrayList<LiveVo.LiveVideoVo>();

@@ -30,7 +30,9 @@ public class CartVo {                   //장바구니 및 주문페이지 vo
         private String  psTitle;        //판매 게시물 제목
         private String  fileId;         //판매 게시물 img
         //private Integer psDiscount;   //판매 게시물 할인율
+        private int     psDeliveryOpt;  //판매 게시물 배송비 코드
         private Integer psDelivery;     //판매 게시물 배송비
+        private int     psDelete;       //판매글 삭제 여부
         private String  uploadPath;
         private String  fileName;
     }

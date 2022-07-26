@@ -121,12 +121,14 @@
                AND LI.LIVE_ID = #{liveId}
                AND LI.FILE_ID = FI.FILE_ID  
     </select>
-     <select id="countLive1Status" parameterType="com.onlive.common.vo.LiveVo" resultType="int">
+     <select id="countLive1Status" parameterType="HashMap" resultType="int">
         /*AdminMapper.countLive1Status*/
 	     SELECT COUNT(LIVE_ID)
 		 FROM   LIVE_INFO
-<![CDATA[WHERE CONCAT(DATE_FORMAT(LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LIVE_START_TIME,' %H:%i')) <=  DATE_FORMAT(#{nowDateTime},'%Y-%m-%d %H:%i') 
-		AND CONCAT(DATE_FORMAT(LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LIVE_END_TIME,' %H:%i')) >=  DATE_FORMAT(#{nowDateTime},'%Y-%m-%d %H:%i') ]]>
+<![CDATA[WHERE CONCAT(DATE_FORMAT(LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LIVE_START_TIME,' %H:%i')) <=  DATE_FORMAT(now(),'%Y-%m-%d %H:%i') 
+		AND CONCAT(DATE_FORMAT(LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LIVE_END_TIME,' %H:%i')) >=  DATE_FORMAT(now(),'%Y-%m-%d %H:%i') ]]>
+		AND SEL_ID = #{selId}
+		AND LIVE_ID != #{liveId}
      </select>
     <update id="updateLive" parameterType="com.onlive.common.vo.LiveVo">
         /*AdminMapper.updateLive*/
@@ -165,7 +167,7 @@
                ,LIVE_INFO LI
         WHERE  SEL_ID = #{selId}
                AND FI.FILE_ID = LI.FILE_ID
-        ORDER BY LIVE_START_DAY
+        ORDER BY LIVE_START_DAY DESC
     </select>
     
     <insert id="createProduct" parameterType="com.onlive.common.vo.ProductVo">
@@ -379,11 +381,16 @@
 		       AND PP.FILE_ID   = FI.FILE_ID            
     
     </select>
-        <delete id="deletePdPost" parameterType="com.onlive.common.vo.PdPostVo">
+    <delete id="deletePdPost" parameterType="com.onlive.common.vo.PdPostVo">
         /*AdminMapper.deleteProducts*/
-        DELETE FROM PRODUCT_POST
+        UPDATE PRODUCT_POST
+        SET    PS_DELETE = 1
         WHERE  SEL_ID = #{selId}
-               AND PS_INDEX = #{psIndex}
+        AND    PS_INDEX = #{psIndex}
+        
+<!--         DELETE FROM PRODUCT_POST
+        WHERE  SEL_ID = #{selId}
+               AND PS_INDEX = #{psIndex} -->
     </delete>
     <update id="updatePdPost" parameterType="com.onlive.common.vo.PdPostVo">
         /*AdminMapper.updatePdPost*/

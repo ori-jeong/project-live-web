@@ -2,6 +2,8 @@ package com.onlive.front.controller;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -263,14 +265,14 @@ public class LoginController {
     /* 판매자 등록하기 */
     @RequestMapping("/proSellerInsert")
     @ResponseBody
-    public CommonApiResponseVo<String> proSellerInsert(@AuthenticationPrincipal UserVo user,SellerVo selVo){
+    public CommonApiResponseVo<String> proSellerInsert(@AuthenticationPrincipal UserVo user,SellerVo selVo,HttpServletRequest request, HttpServletResponse httpResponse){
         CommonApiResponseVo<String> response = new CommonApiResponseVo<>();
         selVo.setSelId(user.getUserId());
         int result = loginService.insertSellerInfo(selVo);
-        response.setResult(true);
         if(result == 1) {
             response.setResult(true);
             response.setMessage(messageSource.getMessage("message.seller.insert"));
+            new SecurityContextLogoutHandler().logout(request,httpResponse, SecurityContextHolder.getContext().getAuthentication());
         }else {
             response.setResult(false);
             response.setMessage(messageSource.getMessage("message.error.seller.insert"));

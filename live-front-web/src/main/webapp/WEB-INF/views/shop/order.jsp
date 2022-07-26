@@ -14,6 +14,7 @@
             <div class="order_pd_list_content">
                 <ul class="order_group">
                   <c:forEach var="sel" items="${cartList}">
+                    <c:set var = "addDelivery" value = "0"  />
                     <li class="order_group_list">
                         <div class="order_group_title">
                             <span class="group_sellerName">${sel.selName}</span>
@@ -39,7 +40,7 @@
                                 </li>
                               </c:if>
                              </c:forEach>
-                              <c:set var = "selDelivery" value = "${selDelivery+delivery}"  />
+                              <c:set var = "addDelivery" value = "${addDelivery+delivery}"  />
                            </c:if>
                           </c:forEach>
                           <div class="order_group_title">
@@ -52,7 +53,7 @@
 	                                    </c:when>
 	                                    <c:otherwise>
 	                                        <span class="price_num">
-	                                             <fmt:formatNumber value="${selDelivery}" pattern="#,###" />
+	                                             <fmt:formatNumber value="${addDelivery}" pattern="#,###" />
 	                                        </span>원
 	                                    </c:otherwise>
 	                                </c:choose>
@@ -202,13 +203,13 @@ $(document).ready(function() {
      <c:forEach var="sel" items="${cartList}" >
 	     <c:forEach var="pdSal" items="${cartPdSalList}" varStatus='status'>
 	        <c:if test="${sel.selId eq pdSal.selId}">           
-	            psList.push({'selId':'${sel.selId}','psIndex':'${pdSal.psIndex}','psDelivery':'${pdSal.psDelivery}'})
+	            psList.push({'selId':'${sel.selId}','psIndex':'${pdSal.psIndex}','psDeliveryOpt':'${pdSal.psDeliveryOpt}','psDelivery':'${pdSal.psDelivery}'})
 	             deliverys[${status.index}] = '${pdSal.psDelivery}';
 	           <c:forEach var="pd" items="${cartPdList}">
 	            <c:if test="${pdSal.psIndex eq pd.psIndex}">
-	            var pdId = '${pd.pdId}';
-	            pdId = pdId.substring(3);
-	            pdList.push({'orderPdId':pdId,'psIndex':'${pdSal.psIndex}','pdId':'${pd.pdId}','pdCount':'${pd.pdCount}','pdCountPrice':'${pd.pdCountPrice}'})
+		            var pdId = '${pd.pdId}';
+		            pdId = pdId.substring(3);
+		            pdList.push({'orderPdId':pdId,'psIndex':'${pdSal.psIndex}','pdId':'${pd.pdId}','pdCount':'${pd.pdCount}','pdCountPrice':'${pd.pdCountPrice}'})
 	            </c:if>
 	           </c:forEach>  
 	        </c:if>
@@ -218,7 +219,6 @@ $(document).ready(function() {
 	    for(var i = 0; i<deliverys.length; i++){
 	        //$('.group_delivery_val').eq(i).text(_format.numberFormatComma(deliverys[i])+'원');
             totalDelivery += parseInt(deliverys[i]);
-            console.log(deliverys[i])
 	    } 
 	    $('.order_sub_delivery_area').find('.order_total_price').text(_format.numberFormatComma(totalDelivery)+' 원');
 	    //상품가격 출력 및 합계 출력

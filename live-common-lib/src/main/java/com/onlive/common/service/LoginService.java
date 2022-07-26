@@ -122,7 +122,7 @@ public class LoginService{
         loginMapper.insertSellerInfo(selVo);
         
         //유저 권한 수정
-        selVo.setSelRole(UserRole.EMPLOYEE.getRole());
+        selVo.setSelRole(UserRole.EMPLOYEE.getKey());
         return loginMapper.updateUserRole(selVo);
     }
 }

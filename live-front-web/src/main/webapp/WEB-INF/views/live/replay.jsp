@@ -6,11 +6,14 @@
 <html lang="ko">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <meta charset="UTF-8">
     <link rel="shortcut icon" href="/img/logo/logo_header_icon.png">
     <title>오늘의쇼핑</title>
     <link rel="stylesheet" type="text/css" href="/css/video.css" >
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="/js/common.js" ></script>
     <script type="text/javascript" src="/js/live_common.js" ></script>  
 </head>
 <body>
@@ -99,7 +102,7 @@
                                             <i class="ModelTitle_icon"></i>
                                         </button>
                                     </div>
-                                    <iframe class="TagItemIframe_iframe" src="http://192.168.219.100:8090/live/item?pd=${replay.psIndex}"></iframe>
+                                    <iframe class="TagItemIframe_iframe" src="/live/item?pd=${replay.psIndex}"></iframe>
                                 </div>
                             </section>
                             <div class="CommentWrite_wrap">

@@ -36,7 +36,6 @@
 							        </a>
                                 </h1>
                                 <div class="ToolBox_wrap">
-                                    <button class="video_save">영상저장</button>
                                     <div class="SoundButton_wrap"> 
                                         <button type="button" class="SoundButton">
                                             <i class="SoundButton_icon header_icon header_icons"></i>

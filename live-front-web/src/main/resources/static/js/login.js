@@ -26,6 +26,9 @@ var code_error = $("#code_error");
             _cookie.remove("rememberId");
         }
     });
+    $("#userId").change(function(){
+        $("input:checkbox[name='rememberId']").prop("checked",false);
+    });
     //로그인 하기
     $('#btn_login').click(function(){
         var login_regul = $("#login_regul");

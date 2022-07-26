@@ -24,6 +24,8 @@
     <script type="text/javascript" src="/js/shop.js"></script>
     <script type="text/javascript" src="/js/mypage.js"></script>
     <script type="text/javascript" src="/js/order.js"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c2dbd6c0b5c00df629f26d19c5981c33&libraries=services"></script>
+    
 </head>
 <body>
 

@@ -74,44 +74,49 @@ $(document).ready(function() {
                 _ajax.ajaxData("/orderPaymentProcess?fromCart="+fromCart,"POST",option);  
             }
              _ajax.ajaxData("/order/getOrderId","POST",getId);
-                         
-            /*IMP.init('imp40385990');                                //가맹점 식별 코드
-            IMP.request_pay({
-                pg: paymentCode,                                    //결제 pg 선택 (받아온 값으로 변경)
-                pay_method : 'card',                                //결제 방식 - 생략 가능
-                merchant_uid : orderIndex,                          //상점에서 관리하는 주문번호
-                name : psTitle,                                     //주문명
-                amount : totalPrice,                                //실제 결제되는 가격
-                //customer_uid : buyer_name + new Date().getTime(), //파라메터가 있어야 빌링키 발급 시도
-                buyer_email : email,                                //구매자 이메일
-                buyer_name : orderName,                             //구매자 이름
-                buyer_tel : tel,                                    //구매자 전화번호
-                buyer_addr : "서울특별시 강남구 신사동",                                // 주소
-                buyer_postcode: "01181"
-            },function(rsp){
-                if(rsp.success){
-                    var param = new Object();                
-                    param.orderPdSelVo = psList;
-                    param.orderPdVo = pdList;
-                    param.paymentVo = {'paymentType' : paymentCode,'totalPdPrice':totalPdPrice,'totalDelivery':totalDelivery,'totalPrice':totalPrice};                  
-                    param.orderId = orderIndex;
-                    param.addrIndex = addrNum;  //주소코드
-                    param.paymentStatus = 21     //결제상태
-                    //param.fromCart = fromCart;
-                    var option = new Object();
-                    option.data = JSON.stringify(param);
-                    option.contentType = "json";
-                    option.success = function(v){
-                       location.href = "/orderComplete/"+orderIndex+"/"+totalPrice;       
+           /*var getId = new Object();
+           getId.success = function(v){ 
+                var orderIndex = v;
+                var psTitle = $('.ps_title').text();
+                var addrNum = $('.addr_fir').attr('class').split('addr_fir').join('').trim();             
+                IMP.init('imp40385990');                                //가맹점 식별 코드
+                IMP.request_pay({
+                    pg: paymentCode,                                    //결제 pg 선택 (받아온 값으로 변경)
+                    pay_method : 'card',                                //결제 방식 - 생략 가능
+                    merchant_uid : orderIndex,                          //상점에서 관리하는 주문번호
+                    name : psTitle,                                     //주문명
+                    amount : totalPrice,                                //실제 결제되는 가격
+                    //customer_uid : buyer_name + new Date().getTime(), //파라메터가 있어야 빌링키 발급 시도
+                    buyer_email : email,                                //구매자 이메일
+                    buyer_name : orderName,                             //구매자 이름
+                    buyer_tel : tel,                                    //구매자 전화번호
+                    buyer_addr : "서울특별시 강남구 신사동",                   // 주소
+                    buyer_postcode: "01181"
+                },function(rsp){
+                    if(rsp.success){
+                        var param = new Object();                
+                        param.orderPdSelVo = psList;
+                        param.orderPdVo = pdList;
+                        param.paymentVo = {'paymentType' : paymentCode,'totalPdPrice':totalPdPrice,'totalDelivery':totalDelivery,'totalPrice':totalPrice};                  
+                        param.orderId = orderIndex;
+                        param.addrIndex = addrNum;  //주소코드
+                        param.paymentStatus = 21     //결제상태
+                        //param.fromCart = fromCart;
+                        var option = new Object();
+                        option.data = JSON.stringify(param);
+                        option.contentType = "json";
+                        option.success = function(v){
+                           location.href = "/orderComplete/"+orderIndex+"/"+totalPrice;       
+                        }
+                        _ajax.ajaxData("/orderConfirm?fromCart="+fromCart,"POST",option);
+                    }else{
+                        alert(rsp.error_msg);
+                        location.reload();
                     }
-                    _ajax.ajaxData("/orderConfirm?fromCart="+fromCart,"POST",option);
-                }else{
-                    alert(rsp.error_msg);
-                    location.reload();
-                }
-            })*/
+                })
+            }
+        _ajax.ajaxData("/order/getOrderId","POST",getId);*/
         }
-
     });
     
  

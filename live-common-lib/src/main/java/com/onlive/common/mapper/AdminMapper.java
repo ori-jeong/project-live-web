@@ -20,7 +20,7 @@ public interface AdminMapper {
     public int updateStreamKey(SellerVo.SellerLiveVo selLive);
     public int createLive(LiveVo live);
     public LiveVo getLiveInfo(LiveVo live);
-    public int countLive1Status(String nowDateTime);
+    public int countLive1Status(Map<String,Object> liveMap);
     public int updateLive(LiveVo live);
     public int deleteLive(LiveVo live);
     public List<LiveVo> getLiveList(String selId);
