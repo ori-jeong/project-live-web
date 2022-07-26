@@ -642,24 +642,25 @@ WHERE  USER_ID = '유저ID'       #유저ID
 * 0이면 해당 상품 주문 금액에 배송비를 추가해 최종 금액으로 취소 처리합니다.
 * 주문이 취소된 상품은 결제 상태 및 주문 상태를 변경할 수 없습니다.  
 <img width="688" alt="상품취소" src="https://user-images.githubusercontent.com/86868936/180945547-cf1ada37-bdda-4228-b591-80f9e63b572c.png">
+
 ```java
-	//선택한 주무번호(orderId)와 판매글ID(psIndex)로 총 개수(주문개수 아니고 주문 코드개수)를 구하고
-	//총 개수에 주문 개수를 빼서 1이상이면 배송비를 추가하지 않고
-	//0이면 배송비를 보여주며 해당 상품 주문 금액에 배송비를 추가해 최종적으로 보여준다
-	//orderId, cancelOrderPrice 출력
-	List<OrderVo.CancelOrderVo> cancelOrderList = new ArrayList<OrderVo.CancelOrderVo>();
-	List<OrderVo.CancelOrderVo> svo = adminMapper.getCancelTotalPrice(salesVo);
-	for(int i =0;i<svo.size();i++) {
-	    OrderVo.CancelOrderVo cancelOrderVo = new OrderVo.CancelOrderVo();
-	    cancelOrderVo.setCancelOrderId(cancelOrderId);
-	    cancelOrderVo.setOrderId(svo.get(i).getOrderId());
-	    cancelOrderVo.setCancelOrderPrice(svo.get(i).getCancelOrderPrice());
-	    cancelOrderList.add(cancelOrderVo);
-	}
-	//취소 db 등록
-	adminMapper.insertCancelOrderSeller(cancelOrderList);
-	//주문 취소로 수정
-	return adminMapper.cancelOrderProcess(salesVo);
+//선택한 주무번호(orderId)와 판매글ID(psIndex)로 총 개수(주문개수 아니고 주문 코드개수)를 구하고
+//총 개수에 주문 개수를 빼서 1이상이면 배송비를 추가하지 않고
+//0이면 배송비를 보여주며 해당 상품 주문 금액에 배송비를 추가해 최종적으로 보여준다
+//orderId, cancelOrderPrice 출력
+List<OrderVo.CancelOrderVo> cancelOrderList = new ArrayList<OrderVo.CancelOrderVo>();
+List<OrderVo.CancelOrderVo> svo = adminMapper.getCancelTotalPrice(salesVo);
+for(int i =0;i<svo.size();i++) {
+  OrderVo.CancelOrderVo cancelOrderVo = new OrderVo.CancelOrderVo();
+  cancelOrderVo.setCancelOrderId(cancelOrderId);
+  cancelOrderVo.setOrderId(svo.get(i).getOrderId());
+  cancelOrderVo.setCancelOrderPrice(svo.get(i).getCancelOrderPrice());
+  cancelOrderList.add(cancelOrderVo);
+}
+//취소 db 등록
+adminMapper.insertCancelOrderSeller(cancelOrderList);
+//주문 취소로 수정
+return adminMapper.cancelOrderProcess(salesVo);
 ```
 
 ---
