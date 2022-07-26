@@ -8,7 +8,7 @@
             <div class="shop_tablist" role="tablist" style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms;">
                 <a href="/" class="main_tab">홈</a>
                 <a href="/shop?category=98" class="main_tab" <c:if test="${category == 98}"> aria-selected="true"</c:if>>라이브</a>
-                <a href="/shop?category=99" class="main_tab" <c:if test="${category == 99}"> aria-selected="true"</c:if>>우리동네라이브</a>
+                <a href="javascript:void(0);" class="main_tab loc_live" class="main_tab">우리동네라이브</a>
                 <a href="/shop?category=101" class="main_tab" <c:if test="${category == 101}"> aria-selected="true"</c:if>>패션</a>
                 <a href="/shop?category=102" class="main_tab" <c:if test="${category == 102}"> aria-selected="true"</c:if>>뷰티</a>
                 <a href="/shop?category=103" class="main_tab" <c:if test="${category == 103}"> aria-selected="true"</c:if>>푸드</a>

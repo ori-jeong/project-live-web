@@ -49,7 +49,8 @@
                     <div class="ListBox_wrap">
                         <div class="ListBox_list">
                             <a href="javascript:0;" class="livenow_tab_menu" aria-selected="true">전체</a>
-<!--                             <a href="javascript:0;" class="livenow_tab_menu">패션</a>
+<!--                        <a href="javascript:0;" class="livenow_tab_menu">우리동네라이브</a>     
+                            <a href="javascript:0;" class="livenow_tab_menu">패션</a>
                             <a href="javascript:0;" class="livenow_tab_menu">뷰티</a>
                             <a href="javascript:0;" class="livenow_tab_menu">푸드</a>
                             <a href="javascript:0;" class="livenow_tab_menu">라이프</a>
