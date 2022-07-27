@@ -120,7 +120,7 @@
 <br>
 
 ## 🦄**1-4. 아키텍처 다이어그램**
-![onl-System-Architecture-Diagram](https://user-images.githubusercontent.com/86868936/181178488-9be1ead6-9d49-4d5b-bc40-0a0911d60f4b.png)
+![onl-System-Architecture-Diagram2](https://user-images.githubusercontent.com/86868936/181180017-e50dcf19-7a8d-43d8-976b-578992395909.png)
 
 
 
