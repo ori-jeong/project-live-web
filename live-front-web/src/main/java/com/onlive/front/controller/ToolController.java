@@ -106,10 +106,8 @@ public class ToolController {
     @ResponseBody
     public CommonApiResponseVo<String> deleteLiveProcess(@AuthenticationPrincipal UserVo user, LiveVo live) {
         CommonApiResponseVo<String> response = new CommonApiResponseVo<>();
-        System.out.println(live);
         live.setSelId(user.getUserId());
         int result = adminService.deleteLive(live);
-        System.out.println("결과결과 : "+result);
         if(result != 0) {
             response.setResult(true);
             response.setMessage(messageSource.getMessage("message.live.delete"));
@@ -179,7 +177,6 @@ public class ToolController {
     @ResponseBody
     public CommonApiResponseVo<String> deleteProductsProcess(@AuthenticationPrincipal UserVo user, @RequestBody ProductVo product) {
         CommonApiResponseVo<String> response = new CommonApiResponseVo<>();
-        System.out.println(product);
         product.setSelId(user.getUserId());
         int result = adminService.deleteProducts(product);
         if(result != 0) {
@@ -298,7 +295,6 @@ public class ToolController {
     public CommonApiResponseVo<String> cancelOrderProcess(@AuthenticationPrincipal UserVo user, @RequestBody SalesVo salesVo) {
         CommonApiResponseVo<String> response = new CommonApiResponseVo<>();
         salesVo.setSelId(user.getUserId());
-        System.out.println(salesVo);
         int result = adminService.cancelOrderProcess(salesVo);
         
         if(result != 0) {

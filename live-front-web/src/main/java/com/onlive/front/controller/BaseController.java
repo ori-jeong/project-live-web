@@ -17,7 +17,6 @@ public class BaseController {
 //    @RequestMapping({ "/", "/index" })
 //    //@RequestMapping(value = "/", method = RequestMethod.GET)
 //    public String strat(HttpServletRequest request,Model model) {
-//        System.out.println(" 시작페이지 ");
 //        return "index";
 //    }
     private final LiveService liveService;

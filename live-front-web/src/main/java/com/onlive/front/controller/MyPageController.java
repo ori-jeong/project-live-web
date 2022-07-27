@@ -107,7 +107,6 @@ public class MyPageController {
     public CommonApiResponseVo<String> setAddress(AddressVo addrVo,@AuthenticationPrincipal UserVo user){
         CommonApiResponseVo<String> response = new CommonApiResponseVo<>();
         addrVo.setUserId(user.getUserId());
-        System.out.println(addrVo);
         int result = myPageService.setAddress(addrVo);
         if(result != 0) {
             response.setResult(true);

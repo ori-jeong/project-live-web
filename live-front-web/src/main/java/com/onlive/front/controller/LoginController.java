@@ -119,7 +119,6 @@ public class LoginController {
         CommonApiResponseVo<String> response = new CommonApiResponseVo<>();
         //아이디 중복검사 및 찾기
         int result = loginService.searchId(userId);
-        System.out.println("결과 : "+result);
         if(result == 0) {
             response.setResult(true);
         }else {
@@ -170,7 +169,6 @@ public class LoginController {
     @RequestMapping("/find/pw/sendCode")
     @ResponseBody
     public CommonApiResponseVo<String> sendCodeEmail(SendCodeVo sendCodeVo) throws MessagingException {
-        System.out.println(sendCodeVo);
         //코드 이메일 전송
         CommonApiResponseVo<String> response = new CommonApiResponseVo<>();
         //이메일 존재 여부

@@ -57,7 +57,6 @@ public class shopController {
     }
     @RequestMapping("/search")
     public ModelAndView getCategory(@ModelAttribute("query") String query) {
-        System.out.println(query);
         ModelAndView mv = new ModelAndView();
         mv.addObject("live",liveService.searchLiveList(query));
         mv.addObject("url",liveUrl);
@@ -94,7 +93,6 @@ public class shopController {
             cart.setUserId(user.getUserId());
             result = shopService.setCartList(cart);
         }
-        System.out.println("결가 : " + result);
         if(result != 0) {
             response.setResult(true);
             response.setMessage(messageSource.getMessage("message.cart.move"));
@@ -147,7 +145,6 @@ public class shopController {
         List<CartVo.CartPdSaleVo> cartPdSalList = new ArrayList<>();
         List<CartVo.CartPdVo>     cartPdList    = new ArrayList<>();
         
-        System.out.println("fromCart : "+fromCart);
         if(fromCart) {
             log.debug("장바구니에서 구매창으로 이동");
             String[] psIndex = request.getParameterValues("psIndex");
@@ -223,7 +220,6 @@ public class shopController {
         //주문 및 결제 성공 처리
         CommonApiResponseVo<String> response = new CommonApiResponseVo<>();
         order.setUserId(user.getUserId());
-        System.out.println("주문내역 : "+ order);
         int result = shopService.setOrders(order,fromCart);
         if(result != 0) {
             response.setResult(true);

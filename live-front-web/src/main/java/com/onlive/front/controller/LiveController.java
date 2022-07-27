@@ -33,7 +33,6 @@ public class LiveController {
     public ModelAndView videoPage(@AuthenticationPrincipal UserVo user,@RequestParam String fm) throws ParseException{
         ModelAndView    mv          = new ModelAndView();
         LiveVo          liveVo      = new LiveVo();
-        System.out.println(user);
         //유저닉네임(회원이면 채팅 가능)
         if(user !=null) {
             mv.addObject("nick",user.getUserNickname());
