@@ -119,7 +119,7 @@
 
 <br>
 
-## **1-6. 아키텍처 다이어그램**
+## 🦄**1-4. 아키텍처 다이어그램**
 ![onl-System-Architecture-Diagram](https://user-images.githubusercontent.com/86868936/181178488-9be1ead6-9d49-4d5b-bc40-0a0911d60f4b.png)
 
 
