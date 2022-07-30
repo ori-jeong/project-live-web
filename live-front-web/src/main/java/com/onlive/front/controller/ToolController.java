@@ -341,6 +341,7 @@ public class ToolController {
         if(seller.getFileId().equals("")) {
             seller.setFileId(null);
         }
+        user.setSelName(seller.getSelName());
         int result = adminService.updateSellerInfo(seller);
         if(result != 0) {
             response.setResult(true);

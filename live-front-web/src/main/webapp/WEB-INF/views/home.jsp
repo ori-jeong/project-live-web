@@ -29,7 +29,7 @@
 	                                <span class="HomeBanner_txt">
 	                                    <span class="HomeBanner_label">LIVE 예고</span>
 	                                    <strong class="HomeBanner_title">스위트홈🧁<br>인기 과자폭탄 선물세트</strong>
-	                                    <span class="HomeBanner_date">7월 10일 오후 9시</span>
+	                                    <span class="HomeBanner_date">8월 10일 오후 9시</span>
 	                                </span>
 	                                <img class="HomeBanner_img" src="/img/banner/live_banner2.png" ></img>
 	                            </div>

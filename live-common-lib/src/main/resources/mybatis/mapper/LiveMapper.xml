@@ -94,7 +94,7 @@
 			              WHERE PS.FILE_ID = FI2.FILE_ID
 			                AND PS_POST_STATUS = 'on' ) PP
 			          ON LI.PS_INDEX= PP.PS_INDEX
-			        JOIN (SELECT SI.SEL_ID
+			   LEFT JOIN (SELECT SI.SEL_ID
 			                     ,SI.SEL_NAME
 			                     ,FI3.FILE_ID
 			                     ,FI3.UPLOAD_PATH             
@@ -144,9 +144,10 @@
 			          WHERE PS.FILE_ID = FI2.FILE_ID
 			            AND PS_POST_STATUS = 'on'  ) PP
 		          ON LI.PS_INDEX= PP.PS_INDEX
-			    JOIN SELLER_INFO SI
+			    LEFT JOIN SELLER_INFO SI
 			      ON SI.SEL_ID = LI.SEL_ID
   <![CDATA[WHERE DATE_FORMAT(LI.LIVE_START_DAY,'%Y-%m-%d') > DATE_FORMAT(now(),'%Y-%m-%d')]]>
+           ORDER BY LI.LIVE_START_DAY,LI.LIVE_START_TIME 
            Limit 4
     </select>  
     <select id="toptenListHome" parameterType="String" resultMap="liveMap">
@@ -185,18 +186,18 @@
 				          WHERE PS.FILE_ID = FI2.FILE_ID
 				            AND PS_POST_STATUS = 'on'  ) PP
 				      ON LI.PS_INDEX= PP.PS_INDEX
-				    JOIN (SELECT SI.SEL_ID
-		                     ,SI.SEL_NAME
-		                     ,FI3.FILE_ID
-		                     ,FI3.UPLOAD_PATH             
+			        JOIN (SELECT SI.SEL_ID
+			                     ,SI.SEL_NAME
+			                     ,FI3.FILE_ID
+			                     ,FI3.UPLOAD_PATH             
 			              FROM SELLER_INFO SI, FILE_INFO FI3
 			              WHERE SI.FILE_ID = FI3.FILE_ID) SS
 			          ON SS.SEL_ID = LI.SEL_ID
-			        JOIN VIDEO_INFO VI
+			   LEFT JOIN VIDEO_INFO VI
 		              ON LI.VIDEO_ID = VI.VIDEO_ID
 <![CDATA[  WHERE LI.LIVE_START_DAY >=  #{nowDateTime} - INTERVAL DAYOFWEEK(now())+6 DAY
                 AND LI.LIVE_START_DAY < #{nowDateTime} - INTERVAL DAYOFWEEK(now()) DAY  ]]>
-		ORDER BY LI.LIVE_VIEW desc
+		ORDER BY LI.LIVE_VIEW DESC
 		   Limit 10
     </select>  
     <select id="getLiveInfo" parameterType="com.onlive.common.vo.LiveVo" resultMap="liveMap">
@@ -235,7 +236,7 @@
 				      WHERE PS.FILE_ID = FI2.FILE_ID
 				        AND PS_POST_STATUS = 'on'  ) PP
 				  ON LI.PS_INDEX= PP.PS_INDEX
-				JOIN (SELECT SI.SEL_ID
+		        JOIN (SELECT SI.SEL_ID
 				             ,SI.SEL_NAME
 				             ,SKEY.SEL_STREAM_KEY
 				             ,SKEY.SEL_CHAT_KEY
@@ -297,6 +298,7 @@
 		   LEFT JOIN VIDEO_INFO VI
 		          ON LI.VIDEO_ID = VI.VIDEO_ID 
        WHERE LIVE_ID = #{liveId}
+       
     </select>
     <select id="getSellerLiveInfo" parameterType="com.onlive.common.vo.LiveVo" resultMap="seller">
         /*LiveMapper.getSellerLiveInfo*/
@@ -362,6 +364,7 @@
 		            JOIN REGION_ADDR RA
 		              ON LI.REGION_1_CODE = RA.REGION_1_CODE
 	        WHERE RA.REGION_1_NAME LIKE '%${location}%'
+    <![CDATA[AND   DATE_FORMAT(LI.LIVE_START_DAY,'%Y-%m-%d') < DATE_FORMAT(now(),'%Y-%m-%d')]]>
     </select> 
      
     <select id="categoryLiveList" parameterType="String" resultMap="liveMap">
@@ -415,7 +418,7 @@
 			   LEFT JOIN VIDEO_INFO VI
 		              ON LI.VIDEO_ID = VI.VIDEO_ID 
 	        WHERE LI.CATE_INDEX = #{category}
-    <!-- <![CDATA[AND CONCAT(CONCAT(TO_CHAR(LIVE_START_DAY,'YYYY-MM-DD'),' '),TO_CHAR(LIVE_END_TIME,'HH24:mi')) < TO_CHAR(SYSDATE,'YYYY-MM-DD HH24:mi')]]> -->
+   <![CDATA[AND   DATE_FORMAT(LI.LIVE_START_DAY,'%Y-%m-%d') < DATE_FORMAT(now(),'%Y-%m-%d')]]>
     </select>
     <select id="searchLiveList" parameterType="String" resultMap="liveMap">
     /*LiveMapper.categoryLiveList*/
