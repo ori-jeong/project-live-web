@@ -2,7 +2,7 @@
     <meta name="_csrf" content="${_csrf.token}"/>
     <meta name="_csrf_header" content="${_csrf.headerName}"/>
 <div id="signup_container">
-    <div class="img_logo signup_img_logo"><img src="/img/logo/logo.png"></div>
+    <div class="img_logo" onclick="location.href='/'" style="cursor:pointer"><img src="/img/logo/logo.png"></div>
     <div id="signup_form">
         <div class="signup_title"><h1>회원가입</h1></div>
         <form name="signUpForm" id="signUpForm" autocomplete="off">

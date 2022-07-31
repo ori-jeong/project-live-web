@@ -43,7 +43,6 @@ public class AuthFailureHandler implements AuthenticationFailureHandler{
             //에러
             loginFailMsg = messageSource.getMessage("message.error.login.fail.non");
         }
-
         request.setAttribute("loginFailMsg", loginFailMsg);
         request.getRequestDispatcher(DEFAULT_FAILURE_URL).forward(request, response);
     }

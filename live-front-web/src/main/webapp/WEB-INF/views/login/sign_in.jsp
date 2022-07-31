@@ -1,7 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" language="java"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <div id="sign_in_container">
-    <div class="img_logo login_img_logo"><img src="/img/logo/logo.png"></div>
+    <div class="img_logo" onclick="location.href='/'" style="cursor:pointer"><img src="/img/logo/logo.png"></div>
     <div id="sign_in_form">      
         <form name="loginForm" autocomplete="off" method="POST">
             <div class="login_input_area">

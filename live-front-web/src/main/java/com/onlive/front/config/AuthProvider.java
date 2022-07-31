@@ -41,6 +41,7 @@ public class AuthProvider implements AuthenticationProvider{
         
         /* DB에서 가져온 정보 */
         UserVo user = loginService.getUserLogin(userId);
+        
         /* 인증 진행 */        
         if(user == null) { //사용자 정보 없음
             throw new UsernameNotFoundException(userId);

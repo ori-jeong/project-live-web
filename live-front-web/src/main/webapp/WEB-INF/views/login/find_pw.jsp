@@ -2,7 +2,7 @@
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 
 <div id="find_pw_container">
-    <div class="img_logo"><img src="/img/logo/logo.png"></div>
+    <div class="img_logo" onclick="location.href='/'" style="cursor:pointer"><img src="/img/logo/logo.png"></div>
     <div id="find_pw_form" class="find_div_form">
         <div class="find_form_title">
             <h1>비밀번호 재설정</h1>  
