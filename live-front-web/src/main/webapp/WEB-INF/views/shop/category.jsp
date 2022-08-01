@@ -8,7 +8,7 @@
             <div class="shop_tablist" role="tablist" style="transition-timing-function: cubic-bezier(0.1, 0.57, 0.1, 1); transition-duration: 0ms;">
                 <a href="/" class="main_tab">홈</a>
                 <a href="/shop?category=98" class="main_tab" <c:if test="${category == 98}"> aria-selected="true"</c:if>>라이브</a>
-                <a href="javascript:void(0);" class="main_tab loc_live">우리동네라이브</a>
+                <a href="javascript:void(0);" class="main_tab loc_live" <c:if test="${category == 99}"> aria-selected="true"</c:if> >우리동네라이브</a>
                 <a href="/shop?category=101" class="main_tab" <c:if test="${category == 101}"> aria-selected="true"</c:if>>패션</a>
                 <a href="/shop?category=102" class="main_tab" <c:if test="${category == 102}"> aria-selected="true"</c:if>>뷰티</a>
                 <a href="/shop?category=103" class="main_tab" <c:if test="${category == 103}"> aria-selected="true"</c:if>>푸드</a>
@@ -115,16 +115,17 @@ var hls = new Hls();
 <c:forEach var="live" items="${live}" varStatus='st'>
    <c:if test="${live.liveStatus eq 1}">
      var video = $('.liveVideo')[${st.index}];
-	 if(video.canPlayType('application/vnd.apple.mpegurl')) {   // 우선 HLS를 지원하는지 체크
-         video.src = "${url}/hls/${live.liveSellerVo.getSelStreamKey()}/index.m3u8";
+     var stream = "${liveUrl}/${live.liveSellerVo.getSelStreamKey()}/index.m3u8"
+     if(video.canPlayType('application/vnd.apple.mpegurl')) {   // 우선 HLS를 지원하는지 체크
+         video.src = stream;
      }else if(Hls.isSupported()){  // HLS를 지원하지 않는다면 hls.js를 지원
-         hls.loadSource("${url}/hls/${live.liveSellerVo.getSelStreamKey()}/index.m3u8");
+         hls.loadSource(stream);
          hls.attachMedia(video);
          hls.on(Hls.Events.MANIFEST_PARSED,()=>{
              video.play(); //라이브 시작
          })
          hls.on(Hls.Events.ERROR, function(data) {
-             hls.destroy();  
+             video.src="";
          });
      }
   </c:if>

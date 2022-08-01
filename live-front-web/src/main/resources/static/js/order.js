@@ -52,7 +52,7 @@ $(document).ready(function() {
         if(paymentCode == 0){
             alert('결제수단을 선택해주세요.');
         }else{           
-            var getId = new Object();
+/*            var getId = new Object();
             getId.success = function(v){
                 var orderIndex = v;
                 var psTitle = $('.ps_title').text();
@@ -73,12 +73,15 @@ $(document).ready(function() {
                 }
                 _ajax.ajaxData("/orderPaymentProcess?fromCart="+fromCart,"POST",option);  
             }
-             _ajax.ajaxData("/order/getOrderId","POST",getId);
-           /*var getId = new Object();
+             _ajax.ajaxData("/order/getOrderId","POST",getId);*/
+           var getId = new Object();
            getId.success = function(v){ 
                 var orderIndex = v;
                 var psTitle = $('.ps_title').text();
-                var addrNum = $('.addr_fir').attr('class').split('addr_fir').join('').trim();             
+                var addrNum = $('.addr_fir').attr('class').split('addr_fir').join('').trim();    
+                var addr = upperClass.find('.addr_addr').text();           //배송지
+                var addr = upperClass.find('.addr_addr').text();           //배송지
+                         
                 IMP.init('imp40385990');                                //가맹점 식별 코드
                 IMP.request_pay({
                     pg: paymentCode,                                    //결제 pg 선택 (받아온 값으로 변경)
@@ -115,7 +118,7 @@ $(document).ready(function() {
                     }
                 })
             }
-        _ajax.ajaxData("/order/getOrderId","POST",getId);*/
+        _ajax.ajaxData("/order/getOrderId","POST",getId);
         }
     });
     

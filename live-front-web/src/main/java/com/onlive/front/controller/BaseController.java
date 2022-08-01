@@ -30,7 +30,7 @@ public class BaseController {
         mv.addObject("live",liveService.liveListHome());    //라이브탭
         mv.addObject("trailer",liveService.trailerListHome());    //예고탭
         mv.addObject("topten",liveService.toptenListHome());    //top10탭
-        mv.addObject("url",liveUrl);
+        mv.addObject("liveUrl",liveUrl);
         mv.setViewName("/home");
         return mv;
     }

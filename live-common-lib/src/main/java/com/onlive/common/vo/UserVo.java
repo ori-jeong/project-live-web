@@ -36,8 +36,9 @@ public class UserVo implements OAuth2User,UserDetails{
         this.userId = userId;
         this.userUname = userUname; 
         this.userNickname = userNickname;
-        this.signUpVo = userPlatform;
         this.userRole = userRole;
+        this.signUpVo = userPlatform;
+        
     }
     @Builder
     public UserVo(String userId,String userUname, String userNickname, String userPhone, Collection<? extends GrantedAuthority> authorities) {
@@ -55,6 +56,10 @@ public class UserVo implements OAuth2User,UserDetails{
     public static class SignUpVo{
         /* 유저 가입 */
         private String userPlatform; 
+        
+        public void userPlatform(String userPlatform) {
+            this.userPlatform = userPlatform;
+        }
     }
     
     @Data

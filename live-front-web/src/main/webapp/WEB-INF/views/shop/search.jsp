@@ -110,20 +110,20 @@
 <script>
 //라이브 연결
 var hls = new Hls();
-let liveVo = "${live}";
 <c:forEach var="live" items="${live}" varStatus='st'>
    <c:if test="${live.liveStatus eq 1}">
      var video = $('.liveVideo')[${st.index}];
+     var stream = "${liveUrl}/${live.liveSellerVo.getSelStreamKey()}/index.m3u8"
 	 if(video.canPlayType('application/vnd.apple.mpegurl')) {   // 우선 HLS를 지원하는지 체크
-         video.src = "http://192.168.219.100:8050/hls/${live.liveSellerVo.getSelStreamKey()}/index.m3u8";
+		 video.src = stream;
      }else if(Hls.isSupported()){  // HLS를 지원하지 않는다면 hls.js를 지원
-         hls.loadSource("http://192.168.219.100:8050/hls/${live.liveSellerVo.getSelStreamKey()}/index.m3u8");
+         hls.loadSource(stream);
          hls.attachMedia(video);
          hls.on(Hls.Events.MANIFEST_PARSED,()=>{
              video.play(); //라이브 시작
          })
          hls.on(Hls.Events.ERROR, function(data) {
-             hls.destroy();  
+        	 video.src="";
          });
      }
   </c:if>

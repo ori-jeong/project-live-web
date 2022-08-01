@@ -54,7 +54,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         
         /* sns에서 가져온 정보 UserVo에 담기 = SNS 정보를 가지고 있음*/
         UserVo user = userInfo(attributes);
-
+        System.out.println(user);
         /* 유저 아이디 존재 확인 = DB 정보를 가지고 있음*/
         SNSUserVo snsUser = repository.findByUserId(attributes.getUserId()).orElse(null);
         /* DB정보가 없으면 SNS에서 가져온 정보로 회원가입하기 */
@@ -113,12 +113,13 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private UserVo userInfo(OAuthAttributes attributes) {
         UserVo.SignUpVo platform = new UserVo.SignUpVo();
         platform.setUserPlatform(attributes.getUserPlatform());
+        UserVo.SignUpVo pf = platform;
         UserVo user = UserVo.builder()
                 .userId(attributes.getUserId())
                 .userUname(attributes.getUserUname())
                 .userNickname(attributes.getUserUname())
                 .userPhone(attributes.getUserPhone())
-                .userPlatform(platform)
+                .userPlatform(pf)
                 .userRole(attributes.getUserRole())
                 .build();
         return user;
@@ -131,7 +132,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String userPw = passwordEncoder.encode(user.getUserId()+uuid);
         user.setUserPw(userPw);
         user.setUserPhone("null");
-        
+        System.out.println(user);
         //유저 정보 등록
         int result = loginMapper.insertUser(user);
         //int result = repository.insertUserInfo( user.getUserId(), userPw, user.getUserUname()

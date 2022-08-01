@@ -27,6 +27,8 @@ public class LiveController {
     
     @Value("${onl.video.url}")
     private String liveUrl;
+    @Value("${onl.chat.url}")
+    private String chatUrl;
     
     /* 라이브 페이지 */
     @RequestMapping("/live")
@@ -46,7 +48,8 @@ public class LiveController {
   
         mv.addObject("live",liveVo);
         mv.addObject("liveStatus",liveVo.getLiveStatus());
-        mv.addObject("url",liveUrl);
+        mv.addObject("liveUrl",liveUrl);
+        mv.addObject("chatUrl",chatUrl);
         mv.setViewName("/live/video");
         return mv;
     }

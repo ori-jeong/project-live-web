@@ -327,6 +327,7 @@
                 ,LI.CATE_INDEX
                 ,LI.LIVE_TITLE
                 ,LI.LIVE_VIEW
+                ,LI.LIVE_STATUS
                 ,DATE_FORMAT(LI.LIVE_START_DAY, '%Y-%m-%d') AS LIVE_START_DAY
                 ,DATE_FORMAT(LI.LIVE_START_TIME, '%H:%i') AS LIVE_START_TIME
                 ,DATE_FORMAT(LI.LIVE_END_TIME, '%H:%i') AS LIVE_END_TIME
@@ -336,35 +337,43 @@
                 ,PP.PS_TITLE
                 ,PP.PS_PRICE
                 ,PP.PS_POST_STATUS
-                ,PP.FILE_ID   AS PS_FILE_ID
-                ,PP.UPLOAD_PATH AS PS_UPLOAD_PATH
+                ,PP.FILE_ID         AS PS_FILE_ID
+                ,PP.UPLOAD_PATH     AS PS_UPLOAD_PATH
                 ,SS.SEL_NAME
-                ,SS.FILE_ID   AS SEL_FILE_ID
-                ,SS.UPLOAD_PATH AS SEL_UPLOAD_PATH
+                ,SS.FILE_ID         AS SEL_FILE_ID
+                ,SS.UPLOAD_PATH     AS SEL_UPLOAD_PATH
+                ,SS.SEL_STREAM_KEY
+                ,VI.VIDEO_PATH
+                ,VI.VIDEO_NAME
             FROM LIVE_INFO LI 
 		       LEFT JOIN FILE_INFO FI
 		              ON LI.FILE_ID = FI.FILE_ID
-		            JOIN (SELECT PS_INDEX
-		                         ,PS_TITLE
-		                         ,PS_PRICE
-		                         ,PS_POST_STATUS
-		                         ,FI2.FILE_ID
-		                         ,FI2.UPLOAD_PATH
-		                  FROM PRODUCT_POST PS, FILE_INFO FI2
-		                  WHERE PS.FILE_ID = FI2.FILE_ID
-		                    AND PS_POST_STATUS = 'on'  ) PP
+		       JOIN (SELECT PS_INDEX
+                            ,PS_TITLE
+		                    ,PS_PRICE
+		                    ,PS_POST_STATUS
+		                    ,FI2.FILE_ID
+		                    ,FI2.UPLOAD_PATH
+		             FROM  PRODUCT_POST PS, FILE_INFO FI2
+		             WHERE PS.FILE_ID = FI2.FILE_ID
+		                   AND PS_POST_STATUS = 'on'  ) PP
 		              ON LI.PS_INDEX= PP.PS_INDEX
-		            JOIN (SELECT SI.SEL_ID
-		                         ,SI.SEL_NAME
-		                         ,FI3.FILE_ID
-		                         ,FI3.UPLOAD_PATH             
-		                  FROM SELLER_INFO SI, FILE_INFO FI3
-		                  WHERE SI.FILE_ID = FI3.FILE_ID) SS
-		              ON SS.SEL_ID = LI.SEL_ID
-		            JOIN REGION_ADDR RA
-		              ON LI.REGION_1_CODE = RA.REGION_1_CODE
+		       JOIN (SELECT SI.SEL_ID
+                            ,SI.SEL_NAME
+		                    ,SKEY.SEL_STREAM_KEY
+		                    ,FI3.FILE_ID
+		                    ,FI3.UPLOAD_PATH             
+		             FROM SELLER_INFO SI, FILE_INFO FI3, STREAMKEY SKEY
+		             WHERE SI.FILE_ID = FI3.FILE_ID
+		             AND SKEY.SEL_ID = SI.SEL_ID) SS
+		             ON SS.SEL_ID = LI.SEL_ID
+		       JOIN REGION_ADDR RA
+		            ON LI.REGION_1_CODE = RA.REGION_1_CODE
+		       LEFT JOIN VIDEO_INFO VI
+                    ON LI.VIDEO_ID = VI.VIDEO_ID 
 	        WHERE RA.REGION_1_NAME LIKE '%${location}%'
-    <![CDATA[AND   DATE_FORMAT(LI.LIVE_START_DAY,'%Y-%m-%d') < DATE_FORMAT(now(),'%Y-%m-%d')]]>
+         <![CDATA[AND CONCAT(DATE_FORMAT(LI.LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LI.LIVE_START_TIME,' %H:%i')) <=  DATE_FORMAT(now(),'%Y-%m-%d %H:%i')]]>
+            ORDER BY LI.LIVE_STATUS
     </select> 
      
     <select id="categoryLiveList" parameterType="String" resultMap="liveMap">
@@ -418,10 +427,11 @@
 			   LEFT JOIN VIDEO_INFO VI
 		              ON LI.VIDEO_ID = VI.VIDEO_ID 
 	        WHERE LI.CATE_INDEX = #{category}
-   <![CDATA[AND   DATE_FORMAT(LI.LIVE_START_DAY,'%Y-%m-%d') < DATE_FORMAT(now(),'%Y-%m-%d')]]>
+         <![CDATA[AND CONCAT(DATE_FORMAT(LI.LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LI.LIVE_START_TIME,' %H:%i')) <=  DATE_FORMAT(now(),'%Y-%m-%d %H:%i')]]>
+            ORDER BY LI.LIVE_STATUS
     </select>
     <select id="searchLiveList" parameterType="String" resultMap="liveMap">
-    /*LiveMapper.categoryLiveList*/
+    /*LiveMapper.searchLiveList*/
         SELECT
                 LI.SEL_ID
                 ,LI.LIVE_ID
@@ -449,7 +459,7 @@
             FROM LIVE_INFO LI 
 		       LEFT JOIN FILE_INFO FI
 		              ON LI.FILE_ID = FI.FILE_ID
-		            JOIN (SELECT PS_INDEX
+		       JOIN (SELECT PS_INDEX
 		                         ,PS_TITLE
 		                         ,PS_PRICE
 		                         ,PS_POST_STATUS
@@ -459,7 +469,7 @@
 		                  WHERE PS.FILE_ID = FI2.FILE_ID
 		                    AND PS_POST_STATUS = 'on'  ) PP
 		              ON LI.PS_INDEX= PP.PS_INDEX
-		            JOIN (SELECT SI.SEL_ID
+		       JOIN (SELECT SI.SEL_ID
 		                         ,SI.SEL_NAME
 		                         ,SKEY.SEL_STREAM_KEY
 		                         ,FI3.FILE_ID
@@ -472,7 +482,8 @@
 		              ON LI.VIDEO_ID = VI.VIDEO_ID 
             WHERE LI.LIVE_TITLE LIKE CONCAT('%',#{query},'%')
                 OR PP.PS_TITLE   LIKE CONCAT('%',#{query},'%')
-    <!-- <![CDATA[AND CONCAT(CONCAT(TO_CHAR(LIVE_START_DAY,'YYYY-MM-DD'),' '),TO_CHAR(LIVE_END_TIME,'HH24:mi')) < TO_CHAR(SYSDATE,'YYYY-MM-DD HH24:mi')]]> -->
+         <![CDATA[AND CONCAT(DATE_FORMAT(LI.LIVE_START_DAY,'%Y-%m-%d'),DATE_FORMAT(LI.LIVE_START_TIME,' %H:%i')) <=  DATE_FORMAT(now(),'%Y-%m-%d %H:%i')]]>
+            ORDER BY LI.LIVE_STATUS
     </select>
     <select id="nowDateTime" resultType="String"> 
         select now() from live_info

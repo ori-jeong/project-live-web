@@ -1,7 +1,7 @@
 $(document).ready(function() {  
     //라이브 연결
     var video = document.getElementById('video');
-    var videoSrc =url+"/hls/"+stream+"/index.m3u8";
+    var videoSrc =url+"/"+stream+"/index.m3u8";
     var hls = new Hls();
     if(status==1){
         if(video.canPlayType('application/vnd.apple.mpegurl')) {   // 우선 HLS를 지원하는지 체크
@@ -96,9 +96,9 @@ $(document).ready(function() {
                 return val + "\n";
             });
         }
-/*        else if(e.keyCode==13){ //엔터시 줄바꿈 처리
+        else if(e.keyCode==13){ //엔터시 줄바꿈 처리
             e.preventDefault(); //엔터시 줄바꿈 방지(동작중단)
             sendMsg();  
-        }*/
+        }
     });
 });

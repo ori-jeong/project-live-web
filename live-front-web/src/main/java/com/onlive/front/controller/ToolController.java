@@ -3,6 +3,7 @@ package com.onlive.front.controller;
 import java.text.ParseException;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +36,9 @@ public class ToolController {
     private final AdminService adminService;
     private final UploadFileService uploadFileService;
     
+    @Value("${onl.chat.url}")
+    private String chatUrl;
+    
     /* 라이브 관리 페이지*/
     @RequestMapping("/tool/live")
     public ModelAndView adminLivePage(@AuthenticationPrincipal UserVo user) {
@@ -49,6 +53,7 @@ public class ToolController {
         ModelAndView    mv          = new ModelAndView();
         mv.addObject("liveKey",adminService.getLiveChatInfo(user.getUserId()));
         mv.addObject("liveId",live);
+        mv.addObject("chatUrl",chatUrl);
         mv.setViewName("/tool/tool_live_chat");
         return mv;
     }

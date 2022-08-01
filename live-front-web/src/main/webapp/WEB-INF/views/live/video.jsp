@@ -134,21 +134,26 @@ $(document).ready(function() {
     const roomId = "${live.liveSellerVo.selChatKey}".trim();
     const status = '${liveStatus}';
     const liveId = '${live.liveId}';
-    const url = '${url}';
+    const liveUrl = '${liveUrl}';
     const nick = '${nick}';
+    const chatUrl = '${chatUrl}';
+    
     //라이브 연결
     var video = document.getElementById('video');
-    var videoSrc =url+"/hls/"+stream+"/index.m3u8";
+    var videoSrc =liveUrl+"/"+stream+"/index.m3u8";
     var hls = new Hls();
     if(status==1){
+    	video.pause();
         if(video.canPlayType('application/vnd.apple.mpegurl')) {   // 우선 HLS를 지원하는지 체크
             video.src = videoSrc;
         }else if(Hls.isSupported()){  // HLS를 지원하지 않는다면 hls.js를 지원
             hls.loadSource(videoSrc);
             hls.attachMedia(video);
             hls.on(Hls.Events.MANIFEST_PARSED,()=>{
-                video.play(); //라이브 시작
-                $('.LiveBadge_live').removeClass('blind');
+            	video.oncanplaythrough = function(){
+                    video.play(); //라이브 시작
+                    $('.LiveBadge_live').removeClass('blind');
+            	}
             })
             hls.on(Hls.Events.ERROR, function(data) {
                 liveEnd();
@@ -184,7 +189,7 @@ $(document).ready(function() {
         }
     })
     
-    var sock = new SockJS("/stomp/chat");  // 연결 주소
+    var sock = new SockJS(chatUrl+"/stomp/chat", null, {transports: ["websocket", "xhr-streaming", "xhr-polling"]});  // 연결 주소
     var client = Stomp.over(sock);
     var header = {request_type:'web'};
    // client.connected = true;     
@@ -196,7 +201,7 @@ $(document).ready(function() {
             var writer = content.writer;
             var msg = content.message;
             var str = '';    
-            if(writer == "master_user_seller"){
+            if(writer == null){
                 str = "<div class='Comments_master'>";
                 str +="<span class='Comment_comment_master'>"+msg+"</span>";
                 str +="</div>";             
@@ -219,14 +224,12 @@ $(document).ready(function() {
     })
     
     $("#send_btn").click(function(){
-        var msg = $("#wa_textarea").val();
-        client.send('/pub/chat/message', {}, JSON.stringify({chatRoomId: roomId, message: msg, writer: nick}));
-        $("#wa_textarea").val('');   
-        $("#send_btn").attr("disabled",true);
+    	send();
     })
     
     //채팅 입력창 값 있으면 전송 버튼 활성화
     $("#wa_textarea").keyup(function(e){
+    	
         //전송 버튼 활성화
         if($("#wa_textarea").val()==""){
             $("#send_btn").attr("disabled",true);
@@ -234,18 +237,24 @@ $(document).ready(function() {
             $("#send_btn").attr("disabled",false);
         }
         //textarea 키 값 이벤트
-        if((e.ctrlKey || e.metaKey) && (e.keyCode == 13 || e.keyCode == 10)) {
+        /* if((e.ctrlKey || e.metaKey) && (e.keyCode == 13 || e.keyCode == 10)) {
             //ctrl+enter
             $("#wa_textarea").val(function(i,val){
                 return val + "\n";
             });
+        } */
+       if(e.keyCode==13 || e.keyCode == 10){
+    	   e.preventDefault(); //엔터시 줄바꿈 방지(동작중단)
+           send();
         }
-/*        else if(e.keyCode==13){ //엔터시 줄바꿈 처리
-            e.preventDefault(); //엔터시 줄바꿈 방지(동작중단)
-            sendMsg();  
-        }*/
        
     });
+    function send(){
+        var msg = $("#wa_textarea").val();
+        client.send('/pub/chat/message', {}, JSON.stringify({chatRoomId: roomId, message: msg, writer: nick}));
+        $("#wa_textarea").val('');   
+        $("#send_btn").attr("disabled",true);
+    }
 });
 </script>
 </html>

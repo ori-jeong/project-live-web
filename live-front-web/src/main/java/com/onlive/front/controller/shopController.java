@@ -50,7 +50,7 @@ public class shopController {
         }else {                                                             //이외 카테고리
             mv.addObject("live",liveService.categoryLiveList(category));
         }
-        mv.addObject("url",liveUrl);
+        mv.addObject("liveUrl",liveUrl);
         mv.setViewName("/shop/category");  
         return mv;
         
@@ -59,7 +59,7 @@ public class shopController {
     public ModelAndView getCategory(@ModelAttribute("query") String query) {
         ModelAndView mv = new ModelAndView();
         mv.addObject("live",liveService.searchLiveList(query));
-        mv.addObject("url",liveUrl);
+        mv.addObject("liveUrl",liveUrl);
         mv.setViewName("/shop/search");  
         return mv;
         

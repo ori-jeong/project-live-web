@@ -68,8 +68,9 @@
 </div>
 <script>
 $(document).ready(function(){ 
+	const chatUrl = '${chatUrl}';	   
     const roomId = "${liveKey.selChatKey}".trim();
-    var sock = new SockJS("/stomp/chat");  // 연결 주소
+    var sock = new SockJS(chatUrl+"/stomp/chat", null, {transports: ["websocket", "xhr-streaming", "xhr-polling"]});  // 연결 주소
     var client = Stomp.over(sock);
     var header = {request_type:'web'};
    // client.connected = true;     
@@ -81,7 +82,7 @@ $(document).ready(function(){
             var writer = content.writer;
             var msg = content.message;
             var str = '';    
-            if(writer == "master_user_seller"){
+            if(writer == null){
                 str = "<div class='Comments_master'>";
                 str +="<span class='Comment_comment_master'>"+msg+"</span>";
                 str +="</div>";            	
@@ -105,10 +106,7 @@ $(document).ready(function(){
     })
     
     $("#master_send").click(function(){
-        var msg = $("#chat_input").val();
-        client.send('/pub/chat/message', {}, JSON.stringify({chatRoomId: roomId, message: msg,writer: "master_user_seller"}));
-        $("#chat_input").val('');    
-        $("#master_send").attr("disabled",true);
+    	send();
     })
     
     //채팅 입력창 값 있으면 전송 버튼 활성화
@@ -119,18 +117,17 @@ $(document).ready(function(){
         }else{
             $("#master_send").attr("disabled",false);
         }
-        //textarea 키 값 이벤트
-        if((e.ctrlKey || e.metaKey) && (e.keyCode == 13 || e.keyCode == 10)) {
-            //ctrl+enter
-            $("#chat_input").val(function(i,val){
-                return val + "\n";
-            });
-        }
-/*        else if(e.keyCode==13){ //엔터시 줄바꿈 처리
+        if(e.keyCode==13 || e.keyCode == 10){
             e.preventDefault(); //엔터시 줄바꿈 방지(동작중단)
-            sendMsg();  
-        }*/
+            send();
+         }
     });
+    function send(){
+        var msg = $("#chat_input").val();
+        client.send('/pub/chat/message', {}, JSON.stringify({chatRoomId: roomId, message: msg}));
+        $("#chat_input").val('');    
+        $("#master_send").attr("disabled",true);
+    }
     
 });
 </script>

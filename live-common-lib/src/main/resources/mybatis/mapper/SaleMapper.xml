@@ -40,9 +40,9 @@
 		      ,PP.PS_DELIVERY
 		      ,PP.PS_CONTENT
 		FROM  PRODUCT_POST PP
-		JOIN  FILE_INFO FI
-		  ON  PP.FILE_ID = FI.FILE_ID
-		 AND PP.PS_INDEX = #{psIndex}
+			JOIN FILE_INFO FI
+			  ON PP.FILE_ID = FI.FILE_ID
+			     AND PP.PS_INDEX = #{psIndex}
 <!--         SELECT SEL_ID
               ,PS_INDEX
               ,PS_TITLE
@@ -60,9 +60,11 @@
 	    SELECT  PI.PD_ID
 		       ,PI.PD_NAME
 		       ,PI.PD_PRICE
-		FROM   PRODUCT_POST_ADD PPA JOIN PRODUCT_INFO PI
-		ON     PPA.PS_INDEX = #{psIndex}
-		AND    PPA.PD_ID = PI.PD_ID
+		FROM   PRODUCT_POST_ADD PPA 
+            JOIN PRODUCT_INFO PI
+		      ON PPA.PS_INDEX = #{psIndex}
+		         AND PPA.PD_ID = PI.PD_ID
+		ORDER BY PD_ID desc
 <!--         /*SaleMapper.getSaleProductList*/
         SELECT PD_ID
                ,PD_NAME
