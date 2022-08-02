@@ -27,6 +27,7 @@ public class ShopService {
         //db에 해당 상품이 없으면 insert, 있으면 수량 update
         int result = 0;
         for(CartVo.CartPdVo cp : cart.getCartPdVo()) {
+            cp.setUserId(cart.getUserId());
             cp.setPsIndex(cart.getPsIndex());
             int value = shopMapper.searchCartList(cp);
             if(value ==0) { //insert

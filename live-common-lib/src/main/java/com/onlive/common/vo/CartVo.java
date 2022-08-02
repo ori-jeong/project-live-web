@@ -42,6 +42,7 @@ public class CartVo {                   //장바구니 및 주문페이지 vo
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CartPdVo{
+        private String  userId;             //유저 id 
         private String  psIndex;        //판매 게시물 id
         private String  pdId;           //상품 id
         private String  pdName;         //상품 명

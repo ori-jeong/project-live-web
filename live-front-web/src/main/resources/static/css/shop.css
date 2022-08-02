@@ -329,7 +329,7 @@ transition: transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
 .addr_fir .addr_name,.addr_fir .addr_recipient{max-width: calc(100% - 80px);text-overflow: ellipsis;white-space: nowrap;overflow-wrap: normal;overflow: hidden;}
 .addr_marker{padding: 3px 8px;box-sizing: border-box;border: 1px solid rgb(53, 197, 240);border-radius: 100px;font-size: 12px;line-height: 14px;color: rgb(53, 197, 240);margin-left: 8px;user-select: none;}
 .addr_addr{margin-top: 10px;font-size: 16px;line-height: 20px;color: rgb(41, 41, 41);word-break: break-word;}
-.addr_phone{display: flex;margin-top: 6px;font-size: 15px;line-height: 18px;color: rgb(117, 117, 117);}
+.addr_post, .addr_phone{display: flex;margin-top: 6px;font-size: 15px;line-height: 18px;color: rgb(117, 117, 117);}
 
 .order_total_price_wrap{padding: 3px 0px;margin: 0px auto;box-sizing: border-box;max-width: 100%;min-height: 1px;align-items: center;width: calc(100% - 80px);}
 .order_list_price{margin: 0px auto;box-sizing: border-box;width: auto;max-width: 100%;min-height: 1px;padding-bottom: 17px;}

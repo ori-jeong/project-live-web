@@ -45,15 +45,8 @@
                                     <option value="non">상태 선택</option>
                                     <c:choose>
                                         <c:when test ="${!empty pd.pdStatus}">
-                                            <c:if test="${pd.pdStatus eq 'off'}">
-                                                <option value="${pd.pdStatus}" selected="selected">미전시</option>
-                                                <option value="on">전시중</option>
-                                            </c:if>
-                                            <c:if test="${pd.pdStatus eq 'on '}">
-                                                <option value="off">미전시</option>
-                                                <option value="${pd.pdStatus}" selected="selected">전시중</option>
-                                            </c:if>
-                                            
+                                            <option value="off" <c:if test="${pd.pdStatus eq 'off'}"> selected="selected"</c:if>>미전시</option>
+                                            <option value="on" <c:if test="${pd.pdStatus eq 'on'}"> selected="selected"</c:if>>전시중</option>
                                         </c:when>
                                         <c:otherwise>
                                             <option value="off">미전시</option>

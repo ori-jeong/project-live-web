@@ -109,21 +109,21 @@
 </div>
 <script>
 //라이브 연결
-var hls = new Hls();
 <c:forEach var="live" items="${live}" varStatus='st'>
    <c:if test="${live.liveStatus eq 1}">
-     var video = $('.liveVideo')[${st.index}];
-     var stream = "${liveUrl}/${live.liveSellerVo.getSelStreamKey()}/index.m3u8"
-	 if(video.canPlayType('application/vnd.apple.mpegurl')) {   // 우선 HLS를 지원하는지 체크
-		 video.src = stream;
+     var hls${st.index} = new Hls();
+     var video${st.index} = $('.liveVideo')[${st.index}];
+     var stream${st.index} = "${liveUrl}/${live.liveSellerVo.getSelStreamKey()}/index.m3u8"
+     if(video${st.index}.canPlayType('application/vnd.apple.mpegurl')) {   // 우선 HLS를 지원하는지 체크
+         video${st.index}.src = stream${st.index};
      }else if(Hls.isSupported()){  // HLS를 지원하지 않는다면 hls.js를 지원
-         hls.loadSource(stream);
-         hls.attachMedia(video);
-         hls.on(Hls.Events.MANIFEST_PARSED,()=>{
-             video.play(); //라이브 시작
+         hls${st.index}.loadSource(stream${st.index});
+         hls${st.index}.attachMedia(video${st.index});
+         hls${st.index}.on(Hls.Events.MANIFEST_PARSED,()=>{
+             video${st.index}.play(); //라이브 시작
          })
-         hls.on(Hls.Events.ERROR, function(data) {
-        	 video.src="";
+         hls${st.index}.on(Hls.Events.ERROR, function(data) {
+             video${st.index}.src="";
          });
      }
   </c:if>

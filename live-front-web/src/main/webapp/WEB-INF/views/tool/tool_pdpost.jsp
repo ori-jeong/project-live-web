@@ -72,7 +72,7 @@
                                     </div>
                                     <div class="post_cell_8">
                                         <c:choose>
-                                          <c:when test="${pds.psPostStatus eq 'on '}">
+                                          <c:when test="${pds.psPostStatus eq 'on'}">
                                               판매중
                                           </c:when>
                                           <c:otherwise>

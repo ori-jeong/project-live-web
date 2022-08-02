@@ -40,6 +40,7 @@ public class shopController {
     @Value("${onl.video.url}")
     private String liveUrl;
     
+    /* 카테고리 입장 */
     @RequestMapping("/shop")
     public ModelAndView getCategory(@ModelAttribute("category") String category,@ModelAttribute("location") String location ) {
         ModelAndView mv = new ModelAndView();
@@ -55,6 +56,8 @@ public class shopController {
         return mv;
         
     }
+
+    /* 검색 */
     @RequestMapping("/search")
     public ModelAndView getCategory(@ModelAttribute("query") String query) {
         ModelAndView mv = new ModelAndView();
@@ -64,7 +67,8 @@ public class shopController {
         return mv;
         
     }
-    
+
+    /* 장바구니 페이지 */
     @RequestMapping("/cart")
     public ModelAndView getCart(@AuthenticationPrincipal UserVo user) {
         ModelAndView mv = new ModelAndView();     
@@ -84,6 +88,8 @@ public class shopController {
         mv.setViewName("/shop/cart");  
         return mv;
     }
+
+    /* 장바구니 등록 */
     @RequestMapping("/cart/setCart")
     @ResponseBody
     public CommonApiResponseVo<String> setCart(@AuthenticationPrincipal UserVo user,@RequestBody CartVo cart){
@@ -102,12 +108,14 @@ public class shopController {
         }
         return response;
     }
-    
+
+    /* 장바구니 수량 수정 */
     @RequestMapping("/cart/updateCartCount")
     @ResponseBody
-    public CommonApiResponseVo<String> updateCartCount(CartVo.CartPdVo cart){
+    public CommonApiResponseVo<String> updateCartCount(@AuthenticationPrincipal UserVo user,CartVo.CartPdVo cart){
         /* 장바구니 상품 개수 수정 */
         CommonApiResponseVo<String> response = new CommonApiResponseVo<>();
+        cart.setUserId(user.getUserId());
         int result = shopService.updateCartCount(cart);
         if(result != 0) {
             response.setResult(true);
@@ -119,10 +127,12 @@ public class shopController {
         return response;
     }
     
+    /* 장바구니 삭제 */
     @RequestMapping("/cart/deleteCart")
     @ResponseBody
-    public CommonApiResponseVo<String> deleteCart(CartVo.CartPdVo cart){
+    public CommonApiResponseVo<String> deleteCart(@AuthenticationPrincipal UserVo user,CartVo.CartPdVo cart){
         CommonApiResponseVo<String> response = new CommonApiResponseVo<>();
+        cart.setUserId(user.getUserId());
         int result = shopService.deleteCart(cart);
         if(result != 0) {
             response.setResult(true);
@@ -134,7 +144,8 @@ public class shopController {
         
         return response;
     }
-
+    
+    /* 결제 페이지 */
     @RequestMapping("/order")
     public ModelAndView orderPageFromCart(HttpServletRequest request,@AuthenticationPrincipal UserVo user
             ,@ModelAttribute("fromCart") boolean fromCart){
@@ -208,12 +219,15 @@ public class shopController {
         mv.setViewName("/shop/order");  
         return mv;
     }
-    
+
+    /* 결제 주문번호 */
     @RequestMapping("/order/getOrderId")
     @ResponseBody
     public String getOrderId() {
         return shopService.setOrderId();
     }
+
+    /* 결제 처리 */
     @RequestMapping("/orderPaymentProcess")
     @ResponseBody
     public CommonApiResponseVo<String> orderPaymentProcess(@RequestBody OrderVo order,@ModelAttribute("fromCart") boolean fromCart, @AuthenticationPrincipal UserVo user){
@@ -230,6 +244,8 @@ public class shopController {
         
         return response;
     }
+
+    /* 결제 성공 후 페이지 이동 */
     @RequestMapping("/paymentComplete/{orderId}/{price}")
     @ResponseBody
     public ModelAndView paymentComplete(@PathVariable("orderId") String orderId,@PathVariable("price") BigInteger price) {

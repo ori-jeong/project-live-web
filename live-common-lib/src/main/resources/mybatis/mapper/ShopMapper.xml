@@ -92,8 +92,9 @@
         /* ShopMapper.searchCartList */
         SELECT COUNT(PD_ID) 
         FROM   CART
-        WHERE  PS_INDEX = #{psIndex}
-          AND  PD_ID    = #{pdId}
+        WHERE  USER_ID  = #{userId}
+            AND PS_INDEX = #{psIndex}
+            AND PD_ID    = #{pdId}
     </select>
     
     <insert id="setCart" parameterType="hashMap">
@@ -176,19 +177,20 @@
         /* ShopMapper.updateCartCount */
         UPDATE  CART
         SET     PD_COUNT = #{pdCount}
-        WHERE   PS_INDEX = #{psIndex}
-          AND   PD_ID    = #{pdId}
+        WHERE   USER_ID  = #{userId}
+            AND PS_INDEX = #{psIndex}
+            AND PD_ID    = #{pdId}
     </update>
     <delete id="deleteCart" parameterType="com.onlive.common.vo.CartVo$CartPdVo">
         /* ShopMapper.deleteCart */
         DELETE FROM CART
-        WHERE
+        WHERE  USER_ID  = #{userId}
         <choose>
             <when test = "pdId == null">
-                 PS_INDEX = #{psIndex}
+             AND PS_INDEX = #{psIndex}
             </when>
             <otherwise>
-                 PS_INDEX = #{psIndex}
+             AND PS_INDEX = #{psIndex}
              AND PD_ID    = #{pdId} 
             </otherwise>
         </choose>

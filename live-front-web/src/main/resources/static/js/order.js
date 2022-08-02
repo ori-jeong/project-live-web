@@ -22,9 +22,9 @@ $(document).ready(function() {
          var recipient = upperClass.find('.addr_recipient').text(); //수령자 이름
          var marker = upperClass.find('.addr_marker').text();       //기본배송지 마크표시
          var addr = upperClass.find('.addr_addr').text();           //배송지
+         var post = upperClass.find('.addr_post').text();           //배송지
          var phone = upperClass.find('.addr_phone').text();         //전화번호
          
-         $('.addr_fir').
          $('.addr_content').find('.addr_name').text(name);
          $('.addr_content').find('.addr_recipient').text(recipient);
          if(marker == ""){
@@ -32,6 +32,7 @@ $(document).ready(function() {
          }else{
              $('.addr_content').find('.addr_marker').show();
          }
+         $('.addr_content').find('.addr_post').text(post);
          $('.addr_content').find('.addr_addr').text(addr);
          $('.addr_content').find('.addr_phone').text(phone);
     });
@@ -45,12 +46,14 @@ $(document).ready(function() {
     })
     //결제하기 클릭
     $('.btn_payment').click(function(){  
-       
+       var addr_div = $('.order_address_content').text().trim();
         if(paymentCode == 'card'){
             paymentCode = 'html5_inicis';
         }
         if(paymentCode == 0){
             alert('결제수단을 선택해주세요.');
+        }else if(addr_div == ""){
+            alert('배송지를 등록해주세요.');    
         }else{           
 /*            var getId = new Object();
             getId.success = function(v){
@@ -79,9 +82,10 @@ $(document).ready(function() {
                 var orderIndex = v;
                 var psTitle = $('.ps_title').text();
                 var addrNum = $('.addr_fir').attr('class').split('addr_fir').join('').trim();    
-                var addr = upperClass.find('.addr_addr').text();           //배송지
-                var addr = upperClass.find('.addr_addr').text();           //배송지
-                         
+                var addr = $('.order_address_content').find('.addr_addr').text().trim();           //배송지
+                var post = $('.order_address_content').find('.addr_post').text().trim();           //배송지
+                console.log(addr);      
+                console.log(post);    
                 IMP.init('imp40385990');                                //가맹점 식별 코드
                 IMP.request_pay({
                     pg: paymentCode,                                    //결제 pg 선택 (받아온 값으로 변경)
@@ -93,9 +97,10 @@ $(document).ready(function() {
                     buyer_email : email,                                //구매자 이메일
                     buyer_name : orderName,                             //구매자 이름
                     buyer_tel : tel,                                    //구매자 전화번호
-                    buyer_addr : "서울특별시 강남구 신사동",                   // 주소
-                    buyer_postcode: "01181"
+                    buyer_addr : addr,                   // 주소
+                    buyer_postcode: post
                 },function(rsp){
+                    console.log(rsp)
                     if(rsp.success){
                         var param = new Object();                
                         param.orderPdSelVo = psList;
@@ -109,9 +114,9 @@ $(document).ready(function() {
                         option.data = JSON.stringify(param);
                         option.contentType = "json";
                         option.success = function(v){
-                           location.href = "/orderComplete/"+orderIndex+"/"+totalPrice;       
+                            location.href = "/paymentComplete/"+orderIndex+"/"+totalPrice;      
                         }
-                        _ajax.ajaxData("/orderConfirm?fromCart="+fromCart,"POST",option);
+                        _ajax.ajaxData("/orderPaymentProcess?fromCart="+fromCart,"POST",option);  
                     }else{
                         alert(rsp.error_msg);
                         location.reload();

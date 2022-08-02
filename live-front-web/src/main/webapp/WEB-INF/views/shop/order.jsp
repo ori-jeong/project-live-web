@@ -81,6 +81,9 @@
                             <span class="addr_recipient">${addr.addrRecipient}</span>
                             <span class="addr_marker">기본배송지</span>
                         </div>
+                        <div class="addr_post">
+                            ${addr.addrPostcode}
+                        </div>
                         <div class="addr_addr">
                             ${addr.addrRoadaddr}&nbsp;${addr.addrDetailaddr}
                         </div>
@@ -166,6 +169,7 @@
                                             <span class="addr_marker"> 기본배송지</span>
                                         </c:if>
                                     </div>
+                                    <div class="addr_post">${addr.addrPostcode}</div>
                                     <div class="addr_addr">${addr.addrRoadaddr}&nbsp;${addr.addrDetailaddr}</div>
                                     <div class="addr_phone">${addr.addrContact}</div>
                                     <div class="addr_button_area">
