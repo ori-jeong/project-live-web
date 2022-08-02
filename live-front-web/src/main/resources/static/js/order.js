@@ -100,7 +100,6 @@ $(document).ready(function() {
                     buyer_addr : addr,                   // 주소
                     buyer_postcode: post
                 },function(rsp){
-                    console.log(rsp)
                     if(rsp.success){
                         var param = new Object();                
                         param.orderPdSelVo = psList;

@@ -57,7 +57,6 @@ _ajax={
         }else{
             option.contentType="application/json; charset=utf-8";    //json전송
         }
-        console.log(option.contentType);
         $.ajax({
             url:rurl
             , data : option.data
@@ -251,7 +250,7 @@ _cookie ={
         var date = new Date();                              //현재 날짜
         date.setDate(date.getDate()+(30));                  //날짜 넣기(현재 날짜 + (한 달))
         expires = "; expires ="+date.toUTCString();         //toUTCString : UTC시간대를 사용해 날짜를 문자열로 변환
-        console.log(key+"="+value+expires+"; path=/");
+       // console.log(key+"="+value+expires+"; path=/");
         document.cookie = key+"="+value+expires+"; path=/"; //document.cookie에 값 넣기
     }, remove: function(key){
         document.cookie = key + "=; expires=0; path=/";     //document.cookie 값 삭제
