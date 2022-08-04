@@ -139,7 +139,7 @@
 
 🌏구현 사이트 주소 : https://onlshop.shop
 
-😎시연 영상 : https://youtu.be/T_VInYfEtl
+😎시연 영상 : https://youtu.be/iwrxak5BPjA
 
 
 ---
