@@ -94,7 +94,7 @@
 * 웹 문서의 뼈대를 구축해 디자인하고 이벤트를 넣어 웹 페이지를 구현/ 관리합니다.
 
 ### **Back-end**
-<img src="https://img.shields.io/badge/JAVA-0DCCEB?style=flat-square&logo=java&logoColor=white&width=300">  <img src="https://img.shields.io/badge/Spring Boot-008CFF?style=flat-square&logo=SpringBoot&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Security-5C2DEB?style=flat-square&logo=Spring Security&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Data JAP-9E6AEB?style=flat-square&logo=Spring Data JPA&logoColor=white"/> <img src="https://img.shields.io/badge/Mybatis-B73FEB?style=flat-square&logo=&logoColor=white"/> <img src="https://img.shields.io/badge/Apache Tomcat-E16AEB?style=flat-square&logo=ApacheTomcat&logoColor=white"/> 
+<img src="https://img.shields.io/badge/JAVA-0DCCEB?style=flat-square&logo=java&logoColor=white&width=300">  <img src="https://img.shields.io/badge/Spring Boot-008CFF?style=flat-square&logo=SpringBoot&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Security-5C2DEB?style=flat-square&logo=Spring Security&logoColor=white"/> <img src="https://img.shields.io/badge/Spring Data JPA-9E6AEB?style=flat-square&logo=Spring Data JPA&logoColor=white"/> <img src="https://img.shields.io/badge/Mybatis-B73FEB?style=flat-square&logo=&logoColor=white"/> <img src="https://img.shields.io/badge/Apache Tomcat-E16AEB?style=flat-square&logo=ApacheTomcat&logoColor=white"/> 
 * 웹 애플리케이션 서버와 보안을 구축하고 라이브러리들의 버전 관리를 자동적으로 관리합니다.
 * 기능별 모듈 분리로 유연한 구조를 가지고 있습니다.
 * 일부분은 **JPA**로 개발해 보다 효율적으로 관리합니다. 
